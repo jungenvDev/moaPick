@@ -5,10 +5,9 @@ export const GlobalStyle = createGlobalStyle`
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      
+      font-family: 'Pretendard', 'Noto Sans Kannada' ,sans-serif;
     }
     body {
-      font-family: 'Noto Sans KR', sans-serif;
       background-color: #f5f5f5;
       height: 100vh;
     }
