@@ -1,14 +1,13 @@
 import {Gnb} from '../../components/molecules/Gnb/Gnb';
 import * as S from './DashboardPage.style';
-import {FaPlus} from 'react-icons/fa';
+import {FloatingButton} from '../../components/atoms/DashboardPage/FloatingButton/FloatingButton';
+
 export const DashboardPage = () => {
 	return (
 		<>
 			<Gnb />
 			<S.DashboardWrapper>
-				<S.FloatingButtonWrapper>
-					<FaPlus />
-				</S.FloatingButtonWrapper>
+				<FloatingButton />
 			</S.DashboardWrapper>
 		</>
 	);
