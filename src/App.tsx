@@ -16,7 +16,7 @@ function App() {
 			<Router>
 				<Routes>
 					<Route path='/' element={isUserLoggedIn ? <Navigate to='/dashboard' /> : <Navigate to='/login' />} />
-					<Route path='/login' element={isUserLoggedIn ? <DashboardPage /> : <LoginPage />} />
+					<Route path='/login' element={isUserLoggedIn ? <Navigate to='/dashboard' /> : <LoginPage />} />
 					<Route path={'/dashboard'} element={isUserLoggedIn ? <DashboardPage /> : <Navigate to='/login' />} />
 				</Routes>
 			</Router>
