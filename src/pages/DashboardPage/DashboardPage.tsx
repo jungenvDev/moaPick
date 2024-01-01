@@ -3,7 +3,7 @@ import * as S from './DashboardPage.style';
 import {FloatingButton} from '../../components/atoms/DashboardPage/FloatingButton/FloatingButton';
 import {Post} from '../../components/molecules/Post/Post';
 import {PostModal} from '../../components/organisms/PostModal/PostModal';
-import {useAtom} from 'jotai/index';
+import {useAtom} from 'jotai';
 import {isPostModalOpenAtom} from '../../stores/postModalOpen';
 import {useEffect} from 'react';
 import {postsAtom} from '../../stores/post';
