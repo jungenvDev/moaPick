@@ -3,7 +3,7 @@ import {GoogleLoginLogo} from '../../assets/svgs/login';
 import {useGoogleLogin} from '@react-oauth/google';
 import {useAtom} from 'jotai';
 import {isUserLoggedInAtom} from '../../stores/googleLogin';
-import {getGoogleUserInfo} from '../../businesslogics/useGetGoogleUserInfo';
+import {getGoogleUserInfo} from '../../queries/auth';
 
 export const LoginPage = () => {
 	const [, setIsUserLoggedIn] = useAtom(isUserLoggedInAtom);

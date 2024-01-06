@@ -3,46 +3,52 @@ import {FaRegTrashCan} from 'react-icons/fa6';
 import {IoMdMore} from 'react-icons/io';
 import {useAtom} from 'jotai';
 import {deletedPostAtom, isDeleteModeAtom} from '../../../stores/postModalOpen';
+import {useDeleteDataFromServer, useGetData} from '../../../queries/post';
 
 export const Gnb = () => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 
+	const {refetch} = useGetData();
+	const {mutate: deleteDataMutation} = useDeleteDataFromServer();
+
 	function handleDeleteClick() {
-		setIsDeleteMode(false);
-		selectedData.map((item: any) => {
-			const selectedIds = item.id;
-			fetch(`http://localhost:4000/posts/${selectedIds}`, {
-				method: 'DELETE',
-				body: JSON.stringify({ids: selectedIds}), // 선택된 데이터의 id를 요청 본문에 넣습니다.
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			})
-				.then(response => {
-					if (response.status === 200) {
-						console.log(`Data with IDs ${selectedIds} has been deleted.`);
-						// 여기에서 추가적인 작업을 수행할 수 있습니다 (예: 상태 업데이트, UI 변경 등)
-					} else {
-						console.error('Error deleting data:', response.statusText);
-					}
-				})
-				.catch(error => console.error('Error:', error));
-		});
+		if (selectedData.length <= 0) {
+			//TODO: 토스트 메시지로 변경
+			alert('삭제할 데이터가 없습니다.');
+		} else {
+			setIsDeleteMode(false);
+			selectedData.map((item: any) => {
+				const selectedIds = item.id;
+				deleteDataMutation(selectedIds, {
+					onSuccess: () => {
+						setSelectedData([]);
+						refetch();
+					},
+				});
+			});
+		}
 	}
 
 	return (
 		<S.GnbWrapper>
 			<span onClick={() => {}}> MOAPICK</span>
 			<S.ButtonWrapper>
-				<FaRegTrashCan
-					onClick={() => {
-						setIsDeleteMode(true);
-					}}
-				/>
-				{isDeleteMode && <span onClick={() => handleDeleteClick()}>삭제</span>}
+				{/*TODO: 삭제할 데이터가 없을 때는 모드 전환X, 토스트 메시지*/}
+				{isDeleteMode ? (
+					<>
+						<S.Button onClick={() => handleDeleteClick()}>삭제</S.Button>
+						<S.Button onClick={() => setIsDeleteMode(false)}>취소</S.Button>
+					</>
+				) : (
+					<FaRegTrashCan
+						onClick={() => {
+							setIsDeleteMode(true);
+						}}
+					/>
+				)}
 				<IoMdMore onClick={() => {}} />
-				{/*	로그아웃버튼 드롭다운*/}
+				{/* TODO:	로그아웃버튼 드롭다운*/}
 			</S.ButtonWrapper>
 		</S.GnbWrapper>
 	);

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const GnbWrapper = styled.div`
 	width: 100%;
 	height: 70px;
+	position: fixed;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -18,4 +19,18 @@ export const ButtonWrapper = styled.span`
 	flex-direction: row;
 	align-items: center;
 	gap: 10px;
+`;
+
+export const Button = styled.button`
+	//회색 그림자
+	box-shadow:
+		0 0 0 1px #d4d4d5,
+		0 2px 0 0 #d4d4d5,
+		0 1px 3px 0 #d4d4d5;
+	background-color: #fff;
+	color: #000;
+	border-radius: 0.28571429rem;
+	padding: 0.5em 1em;
+	font-size: 15px;
+	cursor: pointer;
 `;
