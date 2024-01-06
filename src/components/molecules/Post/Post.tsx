@@ -27,7 +27,6 @@ export const Post = ({data}: {data: PostType}) => {
 				<S.PostOGImage src={'#'} />
 			</S.PostOGImageWrapper>
 			<S.PostContentWrapper>
-				<S.PostTitle>{data.id}</S.PostTitle>
 				<S.PostCheckboxWrapper isDeleteMode={isDeleteMode}>
 					<S.PostCheckbox
 						type='checkbox'
@@ -35,6 +34,7 @@ export const Post = ({data}: {data: PostType}) => {
 						onChange={handlePostClick}
 					/>
 				</S.PostCheckboxWrapper>
+				<S.PostTitle>{data.id}</S.PostTitle>
 			</S.PostContentWrapper>
 		</S.PostWrapper>
 	);

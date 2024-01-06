@@ -38,6 +38,8 @@ export const PostTitle = styled.div`
 export const PostCheckboxWrapper = styled.div<{isDeleteMode: boolean}>`
 	position: relative;
 	display: ${({isDeleteMode}) => (isDeleteMode ? 'block' : 'none')};
+	height: fit-content;
+	width: fit-content;
 `;
 
 export const PostCheckbox = styled.input`
