@@ -63,6 +63,12 @@ export const LinkInput = styled.input`
 	width: 100%;
 `;
 
+export const ErrorMessage = styled.div`
+	width: 90%;
+	font-size: 12px;
+	color: red;
+`;
+
 export const TagWrapper = styled.div`
 	width: 100%;
 	display: flex;
