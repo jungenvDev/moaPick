@@ -7,7 +7,11 @@ import {isUserLoggedInAtom} from '../../stores/googleLogin';
 export const LoginPage = () => {
 	const [, setIsUserLoggedIn] = useAtom(isUserLoggedInAtom);
 	const login = useGoogleLogin({
-		onSuccess: tokenResponse => tokenResponse.access_token && setIsUserLoggedIn(true),
+		onSuccess: tokenResponse => {
+			console.log('=>(LoginPage.tsx:16) login', tokenResponse);
+
+			tokenResponse.access_token && setIsUserLoggedIn(true);
+		},
 		onError: () => console.log('로그인 실패'),
 	});
 
