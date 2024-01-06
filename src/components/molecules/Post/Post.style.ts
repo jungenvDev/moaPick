@@ -34,3 +34,13 @@ export const PostTitle = styled.div`
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 `;
+
+export const PostCheckboxWrapper = styled.div<{isDeleteMode: boolean}>`
+	position: relative;
+	display: ${({isDeleteMode}) => (isDeleteMode ? 'block' : 'none')};
+`;
+
+export const PostCheckbox = styled.input`
+	width: 15px;
+	height: 15px;
+`;

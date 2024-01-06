@@ -88,7 +88,7 @@ export const PostModal = () => {
 					<S.Button
 						onClick={() => {
 							// TODO: 링크 유효성 검사, 태그 선택 여부 확인
-							handleSubmit({id: id, link: link, tag: selectedTag});
+							handleSubmit({id: id, title: '', link: link, tag: selectedTag});
 						}}
 					>
 						확인
