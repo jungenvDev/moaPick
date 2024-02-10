@@ -1,7 +1,7 @@
 import {FaPlus} from 'react-icons/fa';
 import * as S from './FloatingButton.style';
 import {useAtom} from 'jotai';
-import {isPostModalOpenAtom} from '../../../../stores/postModalOpen';
+import {isPostModalOpenAtom} from '../../../../stores/articleModalOpen';
 
 export const FloatingButton = () => {
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);

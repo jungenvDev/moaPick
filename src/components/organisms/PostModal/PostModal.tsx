@@ -1,13 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as S from './PostModal.style';
 import {useAtom} from 'jotai';
-import {isPostModalOpenAtom} from '../../../stores/postModalOpen';
+import {isPostModalOpenAtom} from '../../../stores/articleModalOpen';
 import {IoIosCloseCircle} from 'react-icons/io';
 import {AiFillPlusCircle} from 'react-icons/ai';
-import {postsAtom} from '../../../stores/post';
-import {PostType} from '../../../type/post';
+import {postsAtom} from '../../../stores/article';
 import {urlRegex} from '../../../util/urlRegex';
-import {useAddDataToServer, useGetData} from '../../../queries/post';
+import {useAddArticleToServer, useGetArticle} from '../../../queries/article';
 
 export const PostModal = () => {
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
@@ -15,13 +14,11 @@ export const PostModal = () => {
 	const [tags, setTags] = useState(['Tag1', 'Tag2', 'Tag3']);
 	const [selectedTag, setSelectedTag] = useState('');
 	const [data, setData] = useAtom(postsAtom);
-	const [id, setId] = useState(data.length * Math.random() * 100);
 	const [errorMessage, setErrorMessage] = useState('');
 	const linkInputRef = useRef<HTMLInputElement>(null);
-	const {data: postData, refetch} = useGetData();
-	const {mutate: addDataMutation} = useAddDataToServer();
+	const {refetch} = useGetArticle();
+	const {mutate: addDataMutation} = useAddArticleToServer();
 	useEffect(() => {
-		setId(id + 1);
 		if (linkInputRef.current) {
 			linkInputRef.current.focus();
 		}
@@ -43,7 +40,7 @@ export const PostModal = () => {
 		setLink('');
 	};
 
-	const handleSubmit = (data: PostType) => {
+	const handleSubmit = (data: any) => {
 		if (!link) {
 			setErrorMessage('링크를 입력해주세요.');
 			return;
@@ -65,7 +62,7 @@ export const PostModal = () => {
 	};
 	const handleKeyPress = (e: any) => {
 		if (e.key === 'Enter') {
-			handleSubmit({id: id, title: '', link: link, tag: selectedTag});
+			handleSubmit({title: '', link: link});
 		}
 	};
 	const handleCancel = () => {
@@ -127,7 +124,7 @@ export const PostModal = () => {
 					<S.Button
 						onClick={() => {
 							// TODO: 링크 유효성 검사, 태그 선택 여부 확인
-							handleSubmit({id: id, title: '', link: link, tag: selectedTag});
+							handleSubmit({title: '', link: link});
 						}}
 					>
 						확인

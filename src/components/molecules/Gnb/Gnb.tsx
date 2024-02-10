@@ -2,15 +2,21 @@ import * as S from './Gnb.style';
 import {FaRegTrashCan} from 'react-icons/fa6';
 import {IoMdMore} from 'react-icons/io';
 import {useAtom} from 'jotai';
-import {deletedPostAtom, isDeleteModeAtom} from '../../../stores/postModalOpen';
-import {useDeleteDataFromServer, useGetData} from '../../../queries/post';
+import {
+	deletedPostAtom,
+	isDeleteModeAtom,
+} from '../../../stores/articleModalOpen';
+import {
+	useDeleteArticleFromServer,
+	useGetArticle,
+} from '../../../queries/article';
 
 export const Gnb = () => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 
-	const {refetch} = useGetData();
-	const {mutate: deleteDataMutation} = useDeleteDataFromServer();
+	const {refetch} = useGetArticle();
+	const {mutate: deleteDataMutation} = useDeleteArticleFromServer();
 
 	function handleDeleteClick() {
 		if (selectedData.length <= 0) {
