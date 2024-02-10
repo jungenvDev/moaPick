@@ -1,4 +1,4 @@
-export interface PostType {
+export interface ArticleType {
 	id: number;
 	title: string;
 	link: string;

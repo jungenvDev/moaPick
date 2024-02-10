@@ -1,9 +1,11 @@
-import * as S from './Post.style';
-import {PostType} from '../../../type/post';
-import {deletedPostAtom, isDeleteModeAtom} from '../../../stores/postModalOpen';
+import * as S from './Article.style';
+import {
+	deletedPostAtom,
+	isDeleteModeAtom,
+} from '../../../stores/articleModalOpen';
 import {useAtom} from 'jotai';
 
-export const Post = ({data}: {data: PostType}) => {
+export const Article = ({data}: {data: any}) => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 	const isSelected = selectedData.some(item => item.id === data.id);

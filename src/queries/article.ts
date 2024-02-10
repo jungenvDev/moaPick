@@ -1,7 +1,6 @@
 import {useMutation, useQuery} from 'react-query';
-import {PostType} from '../type/post';
 
-export const useAddDataToServer = () => {
+export const useAddArticleToServer = () => {
 	return useMutation(async (data: any) => {
 		const response = await fetch('http://localhost:4000/posts', {
 			method: 'POST',
@@ -19,7 +18,7 @@ export const useAddDataToServer = () => {
 	});
 };
 
-export const useDeleteDataFromServer = () => {
+export const useDeleteArticleFromServer = () => {
 	return useMutation(async (selectedIds: any) => {
 		const response = await fetch(`http://localhost:4000/posts/${selectedIds}`, {
 			method: 'DELETE',
@@ -40,7 +39,7 @@ export const useDeleteDataFromServer = () => {
 	});
 };
 
-export const useUpdateDataFromServer = () => {
+export const useUpdateArticleFromServer = () => {
 	return useMutation(async (data: any) => {
 		const response = await fetch(`http://localhost:4000/posts/${data.id}`, {
 			method: 'PUT',
@@ -59,11 +58,11 @@ export const useUpdateDataFromServer = () => {
 	});
 };
 
-export const useGetData = () => {
-	return useQuery<PostType[]>('getPost', getPosts, {});
+export const useGetArticle = () => {
+	return useQuery<any[]>('getPost', getArticle, {});
 };
 
-export const getPosts = async () => {
+export const getArticle = async () => {
 	const response = await fetch('http://localhost:4000/posts');
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
