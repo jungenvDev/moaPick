@@ -4,28 +4,11 @@ import {
 	isDeleteModeAtom,
 } from '../../../stores/articleModalOpen';
 import {useAtom} from 'jotai';
-import urlMetadata from 'url-metadata';
-import {useEffect, useState} from 'react';
 
 export const Article = ({data}: {data: any}) => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 	const isSelected = selectedData.some(item => item.id === data.id);
-
-	const [metadata, setMetadata] = useState<urlMetadata.Result | null>(null);
-	const fetchMetadata = async () => {
-		try {
-			const metadata = await urlMetadata(data.article_link);
-
-			setMetadata(metadata);
-		} catch (err) {
-			console.error('Error fetching metadata:', err);
-			setMetadata(null);
-		}
-	};
-	useEffect(() => {
-		fetchMetadata();
-	}, [data.article_link]);
 
 	const handlePostClick = () => {
 		if (isSelected) {
