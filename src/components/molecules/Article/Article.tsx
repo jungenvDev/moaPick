@@ -4,11 +4,28 @@ import {
 	isDeleteModeAtom,
 } from '../../../stores/articleModalOpen';
 import {useAtom} from 'jotai';
+import urlMetadata from 'url-metadata';
+import {useEffect, useState} from 'react';
 
 export const Article = ({data}: {data: any}) => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 	const isSelected = selectedData.some(item => item.id === data.id);
+
+	const [metadata, setMetadata] = useState<urlMetadata.Result | null>(null);
+	const fetchMetadata = async () => {
+		try {
+			const metadata = await urlMetadata(data.article_link);
+
+			setMetadata(metadata);
+		} catch (err) {
+			console.error('Error fetching metadata:', err);
+			setMetadata(null);
+		}
+	};
+	useEffect(() => {
+		fetchMetadata();
+	}, [data.article_link]);
 
 	const handlePostClick = () => {
 		if (isSelected) {
@@ -17,16 +34,17 @@ export const Article = ({data}: {data: any}) => {
 			setSelectedData([...selectedData, data]);
 		}
 	};
+
 	return (
 		<S.PostWrapper
 			onClick={() =>
 				isDeleteMode
 					? setSelectedData([...selectedData, data])
-					: window.open(data.link, '_blank')
+					: window.open(data.article_link, '_blank')
 			}
 		>
 			<S.PostOGImageWrapper>
-				<S.PostOGImage src={'#'} />
+				<S.PostOGImage src={data.og_image_link ?? '#'} />
 			</S.PostOGImageWrapper>
 			<S.PostContentWrapper>
 				<S.PostCheckboxWrapper isDeleteMode={isDeleteMode}>
@@ -36,7 +54,7 @@ export const Article = ({data}: {data: any}) => {
 						onChange={handlePostClick}
 					/>
 				</S.PostCheckboxWrapper>
-				<S.PostTitle>{data.id}</S.PostTitle>
+				<S.PostTitle>{data.title}</S.PostTitle>
 			</S.PostContentWrapper>
 		</S.PostWrapper>
 	);

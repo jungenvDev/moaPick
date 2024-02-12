@@ -4,3 +4,8 @@ export interface ArticleType {
 	link: string;
 	tag: string;
 }
+
+export type SelectedTag = {
+	index: number;
+	name: string;
+};

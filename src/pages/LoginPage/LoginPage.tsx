@@ -1,22 +1,63 @@
 import * as S from './LoginPage.style';
 import {GoogleLoginLogo} from '../../assets/svgs/login';
-import {useGoogleLogin} from '@react-oauth/google';
 import {useAtom} from 'jotai';
-import {isUserLoggedInAtom} from '../../stores/googleLogin';
-import {getGoogleUserInfo} from '../../queries/auth';
+import {isUserLoggedInAtom, userAtom} from '../../stores/googleLogin';
+import {useGoogleLogin} from '@react-oauth/google';
+import {
+	getGoogleUserInfo,
+	useLogInMutation,
+	useSignIn,
+} from '../../queries/auth';
+import {useEffect} from 'react';
 
 export const LoginPage = () => {
 	const [, setIsUserLoggedIn] = useAtom(isUserLoggedInAtom);
+	const [, setUserData] = useAtom(userAtom);
+	const {mutate: signIn} = useSignIn();
+	const logInMutation = useLogInMutation();
+
 	const login = useGoogleLogin({
-		onSuccess: tokenResponse => {
+		onSuccess: async tokenResponse => {
 			if (tokenResponse.access_token) {
-				setIsUserLoggedIn(true);
-				getGoogleUserInfo(tokenResponse.access_token);
+				const userData = await getGoogleUserInfo(tokenResponse.access_token);
+				signIn(userData.email, {
+					onSuccess: response => {
+						// 로컬 스토리지에 access_token 저장
+						localStorage.setItem('accessToken', response.access_token);
+						logInMutation.mutate(response.access_token, {
+							onSuccess: data => {
+								setIsUserLoggedIn(true);
+								setUserData(data);
+								// 로컬 스토리지에 사용자 데이터 저장 (예: JSON 형태로)
+								localStorage.setItem('userData', JSON.stringify(data));
+							},
+							onError: error => {
+								console.error('로그인 오류', error);
+							},
+						});
+					},
+					onError: error => {
+						console.error('로그인 오류', error);
+					},
+				});
 			}
 		},
 		onError: () => console.log('로그인 실패'),
 	});
 
+	// 애플리케이션 로드 시 로그인 상태 확인
+	useEffect(() => {
+		const token = localStorage.getItem('accessToken');
+		const userDataString = localStorage.getItem('userData')!;
+		if (token) {
+			// 로컬 스토리지에서 토큰을 가져와서 로그인 상태 유지
+			const userData = JSON.parse(userDataString);
+			if (userData) {
+				setIsUserLoggedIn(true);
+				setUserData(userData);
+			}
+		}
+	}, []);
 	return (
 		<S.LoginPageWrapper>
 			<S.MoaPickLogo>모아픽 로고</S.MoaPickLogo>

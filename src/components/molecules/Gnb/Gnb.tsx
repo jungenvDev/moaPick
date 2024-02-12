@@ -8,14 +8,14 @@ import {
 } from '../../../stores/articleModalOpen';
 import {
 	useDeleteArticleFromServer,
-	useGetArticle,
+	useGetAllArticle,
 } from '../../../queries/article';
 
 export const Gnb = () => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 
-	const {refetch} = useGetArticle();
+	const {refetch} = useGetAllArticle();
 	const {mutate: deleteDataMutation} = useDeleteArticleFromServer();
 
 	function handleDeleteClick() {

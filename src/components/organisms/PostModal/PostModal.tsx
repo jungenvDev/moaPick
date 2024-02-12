@@ -2,38 +2,95 @@ import React, {useEffect, useRef, useState} from 'react';
 import * as S from './PostModal.style';
 import {useAtom} from 'jotai';
 import {isPostModalOpenAtom} from '../../../stores/articleModalOpen';
-import {IoIosCloseCircle} from 'react-icons/io';
+import {IoIosCheckmarkCircle, IoIosCloseCircle} from 'react-icons/io';
 import {AiFillPlusCircle} from 'react-icons/ai';
-import {postsAtom} from '../../../stores/article';
 import {urlRegex} from '../../../util/urlRegex';
-import {useAddArticleToServer, useGetArticle} from '../../../queries/article';
+import {
+	useAddArticleToServer,
+	useGetAllArticle,
+} from '../../../queries/article';
+import {
+	useAddTags,
+	useDeleteTag,
+	useDetachTag,
+	useGetAllTag,
+} from '../../../queries/tag';
+import {selectedTagAtom} from '../../../stores/tagAtom';
+import {SelectedTag} from '../../../type/article';
 
 export const PostModal = () => {
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [link, setLink] = useState('');
-	const [tags, setTags] = useState(['Tag1', 'Tag2', 'Tag3']);
-	const [selectedTag, setSelectedTag] = useState('');
-	const [data, setData] = useAtom(postsAtom);
+	const {data: allTags} = useGetAllTag();
+	const [tags, setTags] = useState(allTags?.map(tag => tag.title) || []);
+	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [isShowNewTagInput, setIsShowNewTagInput] = useState(false);
+	const [newTagName, setNewTagName] = useState('');
 	const linkInputRef = useRef<HTMLInputElement>(null);
-	const {refetch} = useGetArticle();
-	const {mutate: addDataMutation} = useAddArticleToServer();
+	const {data: allArticle, refetch: allArticleRefetch} = useGetAllArticle();
+
+	const {mutate: addArticleMutation} = useAddArticleToServer();
+	const {mutate: addTagMutation} = useAddTags();
+	const {mutate: deleteTagMutation} = useDeleteTag();
+	const {mutate: detachTagMutation} = useDetachTag();
+
 	useEffect(() => {
 		if (linkInputRef.current) {
 			linkInputRef.current.focus();
 		}
 	}, []);
+
+	const [longTapIndex, setLongTapIndex] = useState<number | null>(null);
+	const longTapTimeoutRef = useRef<number | null>(null);
+
+	const handleLongTapStart = (index: number) => {
+		// setTimeout 호출 시 반환되는 타이머 ID를 useRef에 저장
+		longTapTimeoutRef.current = window.setTimeout(() => {
+			// 브라우저 환경에서는 `window.`를 명시적으로 사용할 수 있습니다.
+			setLongTapIndex(index);
+		}, 500);
+	};
+
+	const handleLongTapEnd = () => {
+		// clearTimeout에 타이머 ID를 전달하여 타이머를 취소
+		if (longTapTimeoutRef.current !== null) {
+			clearTimeout(longTapTimeoutRef.current);
+			longTapTimeoutRef.current = null;
+		}
+	};
+	//TODO: 태그 추가 버튼 누르면 태그 화면 최상단으로 이동
+	//TODO: 동일한 태그네임 입력시 alert
+	const setNewTag = () => {
+		setIsShowNewTagInput(true);
+	};
+
 	const addTag = () => {
-		const newTag = `Tag${tags.length + 1}`;
-		setTags([...tags, newTag]);
+		if (newTagName === '') alert('태그 이름을 입력해주세요.');
+		else {
+			addTagMutation({title: newTagName});
+			setIsShowNewTagInput(false);
+			setTags([...tags, newTagName]);
+			setNewTagName('');
+		}
 	};
 
 	const handleLinkChange = (e: any) => {
 		setLink(e.target.value);
 	};
 
-	const handleTagChange = (e: any) => {
-		setSelectedTag(e.target.value);
+	const handleTagChange = (
+		tag: SelectedTag,
+		e: React.ChangeEvent<HTMLInputElement>,
+	) => {
+		const isChecked = e.target.checked;
+		if (isChecked) {
+			// 태그를 selectedTags에 추가합니다.
+			setSelectedTag([...selectedTag, tag]);
+		} else {
+			// 태그를 selectedTags에서 제거합니다.
+			setSelectedTag(selectedTag.filter(t => t.index !== tag.index));
+		}
 	};
 
 	const handleClear = () => {
@@ -48,24 +105,18 @@ export const PostModal = () => {
 			setErrorMessage('링크 형식이 올바르지 않습니다.');
 			return;
 		}
+
 		setErrorMessage('');
-		addDataMutation(data, {
-			onSuccess: newData => {
-				setData(prevData => [...prevData, newData]);
-				setIsModalOpen(false);
-				refetch();
-			},
-			onError: error => {
-				console.error('Error adding data:', error);
-			},
-		});
+		addArticleMutation(data);
+		setIsModalOpen(false);
 	};
 	const handleKeyPress = (e: any) => {
 		if (e.key === 'Enter') {
-			handleSubmit({title: '', link: link});
+			handleSubmit({title: link, link: link});
 		}
 	};
 	const handleCancel = () => {
+		setSelectedTag([]);
 		setIsModalOpen(false);
 	};
 
@@ -98,24 +149,65 @@ export const PostModal = () => {
 						<S.Title>태그 선택</S.Title>
 						<AiFillPlusCircle
 							onClick={() => {
-								addTag();
+								setNewTag();
 							}}
 						/>
 						{/*	TODO: 태그 추가 기능*/}
 					</S.TitleWrapper>
 					<S.TagContainer>
 						{/*TODO: Tag 중 하나를 꾹 누르면 태그명 변경할 수 있는 기능*/}
+						<S.TagInputWrapper isShowNewTagInput={isShowNewTagInput}>
+							<S.TagInput
+								type='text'
+								placeholder='새로운 태그 이름을 입력해주세요.'
+								value={newTagName}
+								onChange={e => setNewTagName(e.target.value)}
+							/>
+							<IoIosCheckmarkCircle
+								onClick={() => {
+									addTag();
+								}}
+							/>
+						</S.TagInputWrapper>
 						{tags.map((tag, index) => (
-							<S.Tag key={index}>
-								<input
-									type='radio'
-									name='tag'
-									value={tag}
-									onChange={handleTagChange}
-									checked={selectedTag === tag}
-								/>{' '}
-								{tag}
-							</S.Tag>
+							<S.RadioWrapper
+								key={index}
+								onMouseDown={() => handleLongTapStart(index)}
+								onMouseUp={handleLongTapEnd}
+								onMouseLeave={handleLongTapEnd}
+							>
+								<S.Tag>
+									<S.RadioInput
+										type='checkbox'
+										name='tag'
+										value={tag}
+										onChange={e => handleTagChange({index, name: tag}, e)}
+										checked={
+											selectedTag.some(t => t.index === index) ||
+											longTapIndex === index
+										}
+									/>{' '}
+									{tag}
+								</S.Tag>
+								{longTapIndex === index && (
+									<>
+										<S.ModifyTagButton>수정</S.ModifyTagButton>
+										<S.DeleteTagButton
+											onClick={() => {
+												deleteTagMutation(allTags?.[index].id);
+												detachTagMutation({
+													article_id: allArticle?.[allArticle.length - 1].id,
+													tag_id: allTags?.[index].id,
+												});
+												setLongTapIndex(null);
+												setTags(tags.filter((_, i) => i !== index));
+											}}
+										>
+											삭제
+										</S.DeleteTagButton>
+									</>
+								)}
+							</S.RadioWrapper>
 						))}
 					</S.TagContainer>
 				</S.TagWrapper>
@@ -124,7 +216,7 @@ export const PostModal = () => {
 					<S.Button
 						onClick={() => {
 							// TODO: 링크 유효성 검사, 태그 선택 여부 확인
-							handleSubmit({title: '', link: link});
+							handleSubmit({title: link, link: link});
 						}}
 					>
 						확인

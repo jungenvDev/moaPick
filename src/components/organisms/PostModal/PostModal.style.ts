@@ -92,14 +92,65 @@ export const TagContainer = styled.div`
 	}
 `;
 
+export const TagInputWrapper = styled.div<{isShowNewTagInput: boolean}>`
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	display: ${({isShowNewTagInput}) => (isShowNewTagInput ? 'flex' : 'none')};
+`;
+
+export const TagInput = styled.input`
+	width: 80%;
+	height: 30px;
+`;
+
+export const RadioWrapper = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	background-color: #eee;
+`;
+
 export const Tag = styled.span`
-	width: fit-content;
+	width: 100%;
 	height: fit-content;
 	padding: 5px;
 	font-size: 14px;
 	display: flex;
 	align-items: center;
 	gap: 5px;
+`;
+
+export const RadioInput = styled.input`
+	width: 15px;
+	height: 15px;
+	display: flex;
+	align-items: center;
+`;
+
+//ModifyTagButton
+export const ModifyTagButton = styled.button`
+	width: 20%;
+	height: 20px;
+	border-radius: 3px;
+	border: none;
+	background-color: #b2d0ed;
+	color: #346de8;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	margin-right: 5px;
+`;
+export const DeleteTagButton = styled.button`
+	width: 20%;
+	height: 20px;
+	border-radius: 3px;
+	border: none;
+	background-color: #edb2b2;
+	color: #e8344e;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
 `;
 
 export const ButtonWrapper = styled.div`

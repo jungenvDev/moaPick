@@ -9,5 +9,5 @@ export const FloatingButtonWrapper = styled.button`
 	transform: translateX(50%);
 	border-radius: 10px;
 	background-color: #fff;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 10px rgba(215, 215, 215, 0.2);
 `;

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const PostWrapper = styled.div`
 	width: 100%;
+	max-width: 220px;
 	height: 150px;
 	border: 1px solid #eee;
 	border-radius: 5px;

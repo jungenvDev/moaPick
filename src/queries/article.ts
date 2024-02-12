@@ -1,35 +1,45 @@
-import {useMutation, useQuery} from 'react-query';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 
+const accessToken = localStorage.getItem('accessToken');
 export const useAddArticleToServer = () => {
+	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
-		const response = await fetch('http://localhost:4000/posts', {
+		const response = await fetch('http://54.204.181.113/article', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
 			},
 			body: JSON.stringify(data),
 		});
 
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
+		} else {
+			await queryClient.invalidateQueries(['getArticles', 'all']);
 		}
-
-		return await response.json();
+		return response;
 	});
 };
 
 export const useDeleteArticleFromServer = () => {
+	const queryClient = useQueryClient();
 	return useMutation(async (selectedIds: any) => {
-		const response = await fetch(`http://localhost:4000/posts/${selectedIds}`, {
-			method: 'DELETE',
-			body: JSON.stringify({ids: selectedIds}), // 선택된 데이터의 id를 요청 본문에 넣습니다.
-			headers: {
-				'Content-Type': 'application/json',
+		const response = await fetch(
+			`http://54.204.181.113/article/${selectedIds}`,
+			{
+				method: 'DELETE',
+				body: JSON.stringify({ids: selectedIds}), // 선택된 데이터의 id를 요청 본문에 넣습니다.
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${accessToken}`,
+				},
 			},
-		})
+		)
 			.then(response => {
 				if (response.status === 200) {
 					console.log(`Data with IDs ${selectedIds} has been deleted.`);
+					queryClient.invalidateQueries(['getArticles', 'all']);
 					// 여기에서 추가적인 작업을 수행할 수 있습니다 (예: 상태 업데이트, UI 변경 등)
 				} else {
 					console.error('Error deleting data:', response.statusText);
@@ -58,14 +68,34 @@ export const useUpdateArticleFromServer = () => {
 	});
 };
 
-export const useGetArticle = () => {
-	return useQuery<any[]>('getPost', getArticle, {});
+export const useGetAllArticle = () => {
+	return useQuery<any[]>(['getArticles', 'all'], getArticle, {});
 };
 
 export const getArticle = async () => {
-	const response = await fetch('http://localhost:4000/posts');
+	const response = await fetch('http://54.204.181.113/article/all', {
+		headers: {
+			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
 	}
+	return response.json(); // 데이터를 반환합니다.
+};
+
+export const useGetArticleById = (id: string) => {
+	return useQuery<any>(['getArticles', id], () => getArticleById(id), {});
+};
+
+export const getArticleById = async (id: string) => {
+	const response = await fetch(`http://54.204.181.113/article/${id}`, {
+		headers: {
+			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
 	return response.json(); // 데이터를 반환합니다.
 };
