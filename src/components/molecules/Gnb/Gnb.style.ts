@@ -35,3 +35,22 @@ export const Button = styled.button`
 	font-size: 15px;
 	cursor: pointer;
 `;
+
+export const LogoutButton = styled.button`
+	background-color: #fff;
+	color: #2a2a2a;
+	border-radius: 0.28571429rem;
+	padding: 0.5em 1em;
+	font-size: 15px;
+	cursor: pointer;
+	width: 100px;
+	height: 30px;
+	position: absolute;
+	transform: translate(400px, 50px);
+
+	//그림자
+	box-shadow:
+		0 0 0 1px #d4d4d5,
+		0 2px 0 0 #d4d4d5,
+		0 1px 3px 0 #d4d4d5;
+`;
