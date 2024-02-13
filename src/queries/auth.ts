@@ -44,7 +44,7 @@ export const useSignIn = () => {
 
 export const useLogInMutation = () => {
 	return useMutation(async accessToken => {
-		const response = await fetch('http://54.204.181.113/user', {
+		const response = await fetch('모아픽.서버.한국', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
