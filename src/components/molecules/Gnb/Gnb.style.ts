@@ -12,6 +12,7 @@ export const GnbWrapper = styled.div`
 	font-weight: 700;
 	font-size: 24px;
 	flex: 1;
+	background-color: rgba(149, 218, 243, 0.79);
 `;
 
 export const ButtonWrapper = styled.span`
