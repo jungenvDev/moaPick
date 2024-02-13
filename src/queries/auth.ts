@@ -26,7 +26,7 @@ export const getGoogleUserInfo = async (accessToken: string) => {
 
 export const useSignIn = () => {
 	return useMutation(async (email: string) => {
-		const response = await fetch('http://54.204.181.113/user/sign-in', {
+		const response = await fetch('https://moapick.p-e.kr/user/sign-in', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export const useSignIn = () => {
 
 export const useLogInMutation = () => {
 	return useMutation(async accessToken => {
-		const response = await fetch('모아픽.서버.한국', {
+		const response = await fetch('https://moapick.p-e.kr/user', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

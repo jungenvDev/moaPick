@@ -5,7 +5,7 @@ const accessToken = localStorage.getItem('accessToken');
 export const useAddTags = () => {
 	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
-		const response = await fetch('http://54.204.181.113/tag', {
+		const response = await fetch('https://moapick.p-e.kr/tag', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export const useDeleteTag = () => {
 	const queryClient = useQueryClient();
 	return useMutation(
 		async (tagId: number) => {
-			const response = await fetch(`http://54.204.181.113/tag/${tagId}`, {
+			const response = await fetch(`https://moapick.p-e.kr/tag/${tagId}`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export const useGetAllTag = () => {
 };
 
 export const getTags = async () => {
-	const response = await fetch('http://54.204.181.113/tag/all', {
+	const response = await fetch('https://moapick.p-e.kr/tag/all', {
 		headers: {
 			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
 			Authorization: `Bearer ${accessToken}`,
@@ -70,7 +70,7 @@ export const useAttachTag = () => {
 	const queryClient = useQueryClient();
 	return useMutation(
 		async (data: any) => {
-			const response = await fetch('http://54.204.181.113/tag/attach', {
+			const response = await fetch('https://moapick.p-e.kr/tag/attach', {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export const useAttachTag = () => {
 export const useDetachTag = () => {
 	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
-		const response = await fetch('http://54.204.181.113/tag/detach', {
+		const response = await fetch('https://moapick.p-e.kr/tag/detach', {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',

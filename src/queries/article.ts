@@ -4,7 +4,7 @@ const accessToken = localStorage.getItem('accessToken');
 export const useAddArticleToServer = () => {
 	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
-		const response = await fetch('http://54.204.181.113/article', {
+		const response = await fetch('https://moapick.p-e.kr/article', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export const useDeleteArticleFromServer = () => {
 	const queryClient = useQueryClient();
 	return useMutation(async (selectedIds: any) => {
 		const response = await fetch(
-			`http://54.204.181.113/article/${selectedIds}`,
+			`https://moapick.p-e.kr/article/${selectedIds}`,
 			{
 				method: 'DELETE',
 				body: JSON.stringify({ids: selectedIds}), // 선택된 데이터의 id를 요청 본문에 넣습니다.
@@ -51,7 +51,7 @@ export const useDeleteArticleFromServer = () => {
 
 export const useUpdateArticleFromServer = () => {
 	return useMutation(async (data: any) => {
-		const response = await fetch(`http://localhost:4000/posts/${data.id}`, {
+		const response = await fetch(`https://moapick.p-e.kr/${data.id}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export const useGetAllArticle = () => {
 };
 
 export const getArticle = async () => {
-	const response = await fetch('http://54.204.181.113/article/all', {
+	const response = await fetch('https://moapick.p-e.kr/article/all', {
 		headers: {
 			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
 			Authorization: `Bearer ${accessToken}`,
@@ -91,7 +91,7 @@ export const useGetArticleById = (id: string) => {
 };
 
 export const getArticleById = async (id: string) => {
-	const response = await fetch(`http://54.204.181.113/article/${id}`, {
+	const response = await fetch(`https://moapick.p-e.kr/article/${id}`, {
 		headers: {
 			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
 			Authorization: `Bearer ${accessToken}`,
