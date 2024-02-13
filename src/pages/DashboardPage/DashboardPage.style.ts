@@ -10,7 +10,7 @@ export const TagWrapper = styled.div`
 	justify-content: flex-start;
 `;
 
-export const Tag = styled.div`
+export const Tag = styled.div<{index: number}>`
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
@@ -18,7 +18,7 @@ export const Tag = styled.div`
 	padding: 5px 10px;
 	border-radius: 5px;
 	width: fit-content;
-	background-color: #eee;
+	background-color: ${({index}) => `hsl(${(index * 100) % 360}, 100%, 80%)`};
 	font-size: 14px;
 	cursor: pointer;
 	white-space: nowrap;

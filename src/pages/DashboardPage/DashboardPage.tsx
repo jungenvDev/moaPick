@@ -45,7 +45,7 @@ export const DashboardPage = () => {
 			<S.TagWrapper>
 				{allTags?.map((tag: any, index: number) => (
 					<React.Fragment key={tag.id}>
-						<S.Tag>{tag.title}</S.Tag>
+						<S.Tag index={index}>{tag.title}</S.Tag>
 						<S.DashboardWrapper>
 							{allArticle
 								?.filter(
@@ -59,7 +59,7 @@ export const DashboardPage = () => {
 					</React.Fragment>
 				))}
 				<>
-					<S.Tag>태그없음</S.Tag>
+					<S.Tag index={-1}>태그없음</S.Tag>
 					<S.DashboardWrapper>
 						{allArticle
 							?.filter(
