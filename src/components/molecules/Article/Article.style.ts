@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const PostWrapper = styled.div`
 	width: 100%;
 	max-width: 220px;
-	height: 150px;
+	min-height: 150px;
 	border: 1px solid #eee;
 	border-radius: 5px;
 	cursor: pointer;
@@ -23,17 +23,16 @@ export const PostOGImage = styled.img`
 `;
 
 export const PostContentWrapper = styled.div`
-	height: 43px;
-	padding: 3px;
+	height: fit-content;
+	padding: 3px 5px;
 `;
 
 export const PostTitle = styled.div`
-	font-size: 16px;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	font-size: 13px;
+	word-break: break-all;
 	display: -webkit-box;
+	//-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
 `;
 
 export const PostCheckboxWrapper = styled.div<{isDeleteMode: boolean}>`

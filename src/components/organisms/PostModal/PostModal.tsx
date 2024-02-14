@@ -21,10 +21,12 @@ import {SelectedTag} from '../../../type/article';
 export const PostModal = () => {
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [link, setLink] = useState('');
+	const [title, setTitle] = useState('');
 	const {data: allTags} = useGetAllTag();
 	const [tags, setTags] = useState(allTags?.map(tag => tag.title) || []);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
-	const [errorMessage, setErrorMessage] = useState('');
+	const [linkErrorMessage, setLinkErrorMessage] = useState('');
+	const [titleErrorMessage, setTitleErrorMessage] = useState('');
 	const [isShowNewTagInput, setIsShowNewTagInput] = useState(false);
 	const [newTagName, setNewTagName] = useState('');
 	const linkInputRef = useRef<HTMLInputElement>(null);
@@ -74,9 +76,20 @@ export const PostModal = () => {
 			setNewTagName('');
 		}
 	};
+	console.log('=>(PostModal.tsx:264) title.length', title.length);
 
 	const handleLinkChange = (e: any) => {
 		setLink(e.target.value);
+	};
+
+	const handleTitleChange = (e: any) => {
+		if (e.target.value.length > 51) {
+			setTitleErrorMessage('메모는 50자 이하로 입력해주세요.');
+			return;
+		}
+
+		if (e.target.value === '') setTitle(link);
+		else setTitle(e.target.value);
 	};
 
 	const handleTagChange = (
@@ -93,20 +106,24 @@ export const PostModal = () => {
 		}
 	};
 
-	const handleClear = () => {
+	const handleLinkClear = () => {
 		setLink('');
+	};
+
+	const handleTitleClear = () => {
+		setTitle('');
 	};
 
 	const handleSubmit = (data: any) => {
 		if (!link) {
-			setErrorMessage('링크를 입력해주세요.');
+			setLinkErrorMessage('링크를 입력해주세요.');
 			return;
 		} else if (!urlRegex.test(link)) {
-			setErrorMessage('링크 형식이 올바르지 않습니다.');
+			setLinkErrorMessage('링크 형식이 올바르지 않습니다.');
 			return;
 		}
 
-		setErrorMessage('');
+		setLinkErrorMessage('');
 		addArticleMutation(data);
 		setIsModalOpen(false);
 	};
@@ -134,15 +151,39 @@ export const PostModal = () => {
 							value={link}
 							onChange={handleLinkChange}
 							onKeyPress={handleKeyPress}
-							placeholder='복사한 URL을 붙여주세요.'
+							placeholder='복사한 URL을 붙여 넣어주세요.'
 						/>
 						<IoIosCloseCircle
 							onClick={() => {
-								handleClear();
+								handleLinkClear();
 							}}
 						/>
 					</S.LinkInputContainer>
-					{errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
+					{linkErrorMessage && (
+						<S.ErrorMessage>{linkErrorMessage}</S.ErrorMessage>
+					)}
+				</S.LinkInputWrapper>
+				<S.LinkInputWrapper>
+					<S.TitleWrapper>
+						<S.Title>메모</S.Title>
+					</S.TitleWrapper>
+					<S.LinkInputContainer>
+						<S.LinkInput
+							type='text'
+							value={title}
+							onChange={handleTitleChange}
+							onKeyPress={handleKeyPress}
+							placeholder='메모를 적어주세요.'
+						/>
+						<IoIosCloseCircle
+							onClick={() => {
+								handleTitleClear();
+							}}
+						/>
+					</S.LinkInputContainer>
+					{titleErrorMessage && (
+						<S.ErrorMessage>{titleErrorMessage}</S.ErrorMessage>
+					)}
 				</S.LinkInputWrapper>
 				<S.TagWrapper>
 					<S.TitleWrapper>
@@ -216,7 +257,7 @@ export const PostModal = () => {
 					<S.Button
 						onClick={() => {
 							// TODO: 링크 유효성 검사, 태그 선택 여부 확인
-							handleSubmit({title: link, link: link});
+							handleSubmit({title: title, link: link});
 						}}
 					>
 						확인

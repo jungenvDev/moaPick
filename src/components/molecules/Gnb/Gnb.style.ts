@@ -20,6 +20,7 @@ export const ButtonWrapper = styled.span`
 	flex-direction: row;
 	align-items: center;
 	gap: 10px;
+	cursor: pointer;
 `;
 
 export const Button = styled.button`
@@ -46,9 +47,10 @@ export const LogoutButton = styled.button`
 	width: 100px;
 	height: 30px;
 	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	transform: translate(400px, 50px);
-
-	//그림자
 	box-shadow:
 		0 0 0 1px #d4d4d5,
 		0 2px 0 0 #d4d4d5,
