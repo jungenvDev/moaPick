@@ -12,6 +12,7 @@ export const GnbWrapper = styled.div`
 	font-weight: 700;
 	font-size: 24px;
 	flex: 1;
+	z-index: 10;
 	background-color: rgba(149, 218, 243, 0.79);
 `;
 
@@ -51,6 +52,7 @@ export const LogoutButton = styled.button`
 	align-items: center;
 	justify-content: center;
 	transform: translate(400px, 50px);
+	z-index: 11;
 	box-shadow:
 		0 0 0 1px #d4d4d5,
 		0 2px 0 0 #d4d4d5,

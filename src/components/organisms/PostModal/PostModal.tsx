@@ -1,13 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as S from './PostModal.style';
 import {useAtom} from 'jotai';
-import {isPostModalOpenAtom} from '../../../stores/articleModalOpen';
+import {
+	isModifyModeAtom,
+	isPostModalOpenAtom,
+} from '../../../stores/articleModalOpen';
 import {IoIosCheckmarkCircle, IoIosCloseCircle} from 'react-icons/io';
 import {AiFillPlusCircle} from 'react-icons/ai';
 import {urlRegex} from '../../../util/urlRegex';
 import {
 	useAddArticleToServer,
 	useGetAllArticle,
+	useGetArticleById,
+	useModifyArticle,
 } from '../../../queries/article';
 import {
 	useAddTags,
@@ -19,9 +24,12 @@ import {selectedTagAtom} from '../../../stores/tagAtom';
 import {SelectedTag} from '../../../type/article';
 
 export const PostModal = () => {
+	const [isModifyMode] = useAtom(isModifyModeAtom);
+	const {data: articleData} = useGetArticleById(isModifyMode);
+	console.log('=>(PostModal.tsx:28) articleData', articleData);
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
-	const [link, setLink] = useState('');
-	const [title, setTitle] = useState('');
+	const [link, setLink] = useState(articleData?.article_link || '');
+	const [title, setTitle] = useState(articleData?.title || '');
 	const {data: allTags} = useGetAllTag();
 	const [tags, setTags] = useState(allTags?.map(tag => tag.title) || []);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
@@ -33,6 +41,7 @@ export const PostModal = () => {
 	const {data: allArticle, refetch: allArticleRefetch} = useGetAllArticle();
 
 	const {mutate: addArticleMutation} = useAddArticleToServer();
+	const {mutate: modifyArticleMutation} = useModifyArticle();
 	const {mutate: addTagMutation} = useAddTags();
 	const {mutate: deleteTagMutation} = useDeleteTag();
 	const {mutate: detachTagMutation} = useDetachTag();
@@ -43,6 +52,22 @@ export const PostModal = () => {
 		}
 	}, []);
 
+	//수정 모드 진입
+	useEffect(() => {
+		if (isModifyMode !== -1 && articleData?.tags && allTags) {
+			// `articleData.tags`에 있는 각 태그에 대해 전체 태그 목록(`allTags`)에서 해당 태그의 인덱스를 찾습니다.
+			const selectedTags = articleData.tags
+				.map((tag: any) => {
+					const index = allTags.findIndex(t => t.title === tag.title);
+					return {index, name: tag.title};
+				})
+				.filter((tag: any) => tag.index !== -1); // allTags에서 찾을 수 있는 태그만을 포함합니다.
+
+			setSelectedTag(selectedTags);
+			setLink(articleData.article_link);
+			setTitle(articleData.title);
+		}
+	}, [isModifyMode, articleData, allTags, setSelectedTag]);
 	const [longTapIndex, setLongTapIndex] = useState<number | null>(null);
 	const longTapTimeoutRef = useRef<number | null>(null);
 
@@ -76,7 +101,6 @@ export const PostModal = () => {
 			setNewTagName('');
 		}
 	};
-	console.log('=>(PostModal.tsx:264) title.length', title.length);
 
 	const handleLinkChange = (e: any) => {
 		setLink(e.target.value);
@@ -86,10 +110,7 @@ export const PostModal = () => {
 		if (e.target.value.length > 51) {
 			setTitleErrorMessage('메모는 50자 이하로 입력해주세요.');
 			return;
-		}
-
-		if (e.target.value === '') setTitle(link);
-		else setTitle(e.target.value);
+		} else setTitle(e.target.value);
 	};
 
 	const handleTagChange = (
@@ -132,6 +153,24 @@ export const PostModal = () => {
 			handleSubmit({title: link, link: link});
 		}
 	};
+
+	const handleModify = () => {
+		if (!link) {
+			setLinkErrorMessage('링크를 입력해주세요.');
+			return;
+		} else if (!urlRegex.test(link)) {
+			setLinkErrorMessage('링크 형식이 올바르지 않습니다.');
+			return;
+		}
+
+		setLinkErrorMessage('');
+		modifyArticleMutation({
+			id: isModifyMode,
+			title: title === '' ? link : title,
+			link: link,
+		});
+		setIsModalOpen(false);
+	};
 	const handleCancel = () => {
 		setSelectedTag([]);
 		setIsModalOpen(false);
@@ -146,6 +185,7 @@ export const PostModal = () => {
 					</S.TitleWrapper>
 					<S.LinkInputContainer>
 						<S.LinkInput
+							disabled={!!isModifyMode}
 							ref={linkInputRef}
 							type='text'
 							value={link}
@@ -153,11 +193,13 @@ export const PostModal = () => {
 							onKeyPress={handleKeyPress}
 							placeholder='복사한 URL을 붙여 넣어주세요.'
 						/>
-						<IoIosCloseCircle
-							onClick={() => {
-								handleLinkClear();
-							}}
-						/>
+						{!isModifyMode && (
+							<IoIosCloseCircle
+								onClick={() => {
+									handleLinkClear();
+								}}
+							/>
+						)}
 					</S.LinkInputContainer>
 					{linkErrorMessage && (
 						<S.ErrorMessage>{linkErrorMessage}</S.ErrorMessage>
@@ -214,6 +256,8 @@ export const PostModal = () => {
 							<S.RadioWrapper
 								key={index}
 								onMouseDown={() => handleLongTapStart(index)}
+								onTouchStart={() => handleLongTapStart(index)}
+								onTouchEnd={handleLongTapEnd}
 								onMouseUp={handleLongTapEnd}
 								onMouseLeave={handleLongTapEnd}
 							>
@@ -224,20 +268,20 @@ export const PostModal = () => {
 										value={tag}
 										onChange={e => handleTagChange({index, name: tag}, e)}
 										checked={
-											selectedTag.some(t => t.index === index) ||
+											selectedTag?.some(t => t.index === index) ||
 											longTapIndex === index
 										}
 									/>{' '}
 									{tag}
 								</S.Tag>
 								{longTapIndex === index && (
-									<>
+									<S.TagButtonWrapper>
 										<S.ModifyTagButton>수정</S.ModifyTagButton>
 										<S.DeleteTagButton
 											onClick={() => {
 												deleteTagMutation(allTags?.[index].id);
 												detachTagMutation({
-													article_id: allArticle?.[allArticle.length - 1].id,
+													article_id: allArticle?.[allArticle?.length - 1].id,
 													tag_id: allTags?.[index].id,
 												});
 												setLongTapIndex(null);
@@ -246,7 +290,7 @@ export const PostModal = () => {
 										>
 											삭제
 										</S.DeleteTagButton>
-									</>
+									</S.TagButtonWrapper>
 								)}
 							</S.RadioWrapper>
 						))}
@@ -256,8 +300,12 @@ export const PostModal = () => {
 					<S.Button onClick={handleCancel}>취소</S.Button>
 					<S.Button
 						onClick={() => {
-							// TODO: 링크 유효성 검사, 태그 선택 여부 확인
-							handleSubmit({title: title, link: link});
+							isModifyMode
+								? handleModify()
+								: handleSubmit({
+										title: title === '' ? link : title,
+										link: link,
+									});
 						}}
 					>
 						확인

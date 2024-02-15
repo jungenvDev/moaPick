@@ -4,12 +4,23 @@ import {
 	isDeleteModeAtom,
 } from '../../../stores/articleModalOpen';
 import {useAtom} from 'jotai';
+import React, {useRef} from 'react';
 
-export const Article = ({data}: {data: any}) => {
-	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
+export const Article = ({
+	data,
+	index,
+	handleLongTapStart,
+	handleLongTapEnd,
+}: {
+	data: any;
+	index: number;
+	handleLongTapStart: (index: number) => void;
+	handleLongTapEnd: () => void;
+}) => {
+	const [isDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 	const isSelected = selectedData.some(item => item.id === data.id);
-
+	const longTapTimeoutRef = useRef<number | null>(null);
 	const handlePostClick = () => {
 		if (isSelected) {
 			setSelectedData(selectedData.filter(item => item.id !== data.id));
@@ -20,11 +31,16 @@ export const Article = ({data}: {data: any}) => {
 
 	return (
 		<S.PostWrapper
-			onClick={() =>
+			onMouseDown={() => handleLongTapStart(index)}
+			onMouseUp={() => handleLongTapEnd()}
+			onTouchStart={() => handleLongTapStart(index)}
+			onTouchEnd={() => handleLongTapEnd()}
+			onClick={e => {
+				e.stopPropagation();
 				isDeleteMode
 					? setSelectedData([...selectedData, data])
-					: window.open(data.article_link, '_blank')
-			}
+					: window.open(data.article_link, '_blank');
+			}}
 		>
 			<S.PostOGImageWrapper>
 				<S.PostOGImage src={data.og_image_link ?? '#'} />

@@ -3,22 +3,40 @@ import * as S from './DashboardPage.style';
 import {FloatingButton} from '../../components/atoms/DashboardPage/FloatingButton/FloatingButton';
 import {PostModal} from '../../components/organisms/PostModal/PostModal';
 import {useAtom} from 'jotai';
-import {isPostModalOpenAtom} from '../../stores/articleModalOpen';
+import {
+	isModifyModeAtom,
+	isPostModalOpenAtom,
+} from '../../stores/articleModalOpen';
 import {useGetAllArticle} from '../../queries/article';
 import {Article} from '../../components/molecules/Article/Article';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useAttachTag, useGetAllTag} from '../../queries/tag';
 import {selectedTagAtom} from '../../stores/tagAtom';
 
 export const DashboardPage = () => {
-	const [isModalOpen] = useAtom(isPostModalOpenAtom);
+	const [isModalOpen, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
-	const {data: allArticle, isLoading, isError} = useGetAllArticle();
+	const [isModifyMode, setIsModifyMode] = useAtom(isModifyModeAtom);
 	// const {data} = useGetArticleById('50');
-
+	const {data: allArticle, isLoading, isError} = useGetAllArticle();
 	const {data: allTags} = useGetAllTag();
-
 	const {mutate: attachTagToArticle} = useAttachTag();
+	const longTapTimeoutRef = useRef<number | null>(null);
+	const [longTapIndex, setLongTapIndex] = useState<number | null>(null);
+	const handleLongTapStart = (articleId: number) => {
+		// setTimeout 호출 시 반환되는 타이머 ID를 useRef에 저장
+		longTapTimeoutRef.current = window.setTimeout(() => {
+			setLongTapIndex(articleId);
+		}, 500);
+	};
+
+	const handleLongTapEnd = () => {
+		// clearTimeout에 타이머 ID를 전달하여 타이머를 취소
+		if (longTapTimeoutRef.current !== null) {
+			clearTimeout(longTapTimeoutRef.current);
+			longTapTimeoutRef.current = null;
+		}
+	};
 	useEffect(() => {
 		if (selectedTag.length === 0) return;
 		selectedTag.forEach(selectedTag => {
@@ -52,7 +70,30 @@ export const DashboardPage = () => {
 									item => item.tags?.some((t: any) => t.title === tag.title),
 								)
 								.map(filteredItem => (
-									<Article key={filteredItem.id} data={filteredItem} />
+									<>
+										<Article
+											key={filteredItem.id}
+											data={filteredItem}
+											index={index}
+											handleLongTapStart={() =>
+												handleLongTapStart(filteredItem.id)
+											}
+											handleLongTapEnd={handleLongTapEnd}
+										/>
+										{longTapIndex === filteredItem.id && (
+											<S.ArticleButtonWrapper>
+												<S.ModifyArticleButton
+													onClick={() => {
+														setIsModalOpen(true);
+														setIsModifyMode(filteredItem.id);
+													}}
+												>
+													수정
+												</S.ModifyArticleButton>
+												<S.DeleteArticleButton>삭제</S.DeleteArticleButton>
+											</S.ArticleButtonWrapper>
+										)}
+									</>
 								))}
 							<FloatingButton />
 						</S.DashboardWrapper>
@@ -66,7 +107,13 @@ export const DashboardPage = () => {
 								item => item.tags === undefined || item.tags?.length === 0,
 							)
 							.map(filteredItem => (
-								<Article key={filteredItem.id} data={filteredItem} />
+								<Article
+									key={filteredItem.id}
+									data={filteredItem}
+									index={-1}
+									handleLongTapStart={() => handleLongTapStart(filteredItem.id)}
+									handleLongTapEnd={handleLongTapEnd}
+								/>
 							))}
 						<FloatingButton />
 					</S.DashboardWrapper>

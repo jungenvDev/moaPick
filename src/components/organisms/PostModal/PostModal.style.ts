@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const PostModalBackground = styled.span`
 	width: 100%;
 	height: 100%;
+	min-height: 300px;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -15,8 +16,9 @@ export const PostModalBackground = styled.span`
 
 export const PostModalWrapper = styled.div`
 	width: 300px;
-	gap: 20px;
+	min-height: 120px;
 	height: fit-content;
+	gap: 20px;
 	background-color: #fff;
 	border-radius: 5px;
 	position: fixed;
@@ -44,6 +46,7 @@ export const Title = styled.div`
 
 export const LinkInputWrapper = styled.div`
 	width: 100%;
+	height: fit-content;
 	gap: 10px;
 	display: flex;
 	flex-direction: column;
@@ -80,7 +83,7 @@ export const TagWrapper = styled.div`
 
 export const TagContainer = styled.div`
 	width: 90%;
-	height: 70px;
+	min-height: 70px;
 	display: flex;
 	flex-direction: column;
 	padding: 5px;
@@ -107,6 +110,7 @@ export const TagInput = styled.input`
 export const RadioWrapper = styled.div`
 	width: 100%;
 	display: flex;
+	align-items: center;
 	justify-content: space-between;
 	background-color: #eee;
 `;
@@ -128,9 +132,15 @@ export const RadioInput = styled.input`
 	align-items: center;
 `;
 
-//ModifyTagButton
+export const TagButtonWrapper = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: transparent;
+`;
 export const ModifyTagButton = styled.button`
-	width: 20%;
+	width: 100%;
 	height: 20px;
 	border-radius: 3px;
 	border: none;
@@ -140,9 +150,12 @@ export const ModifyTagButton = styled.button`
 	font-weight: 600;
 	cursor: pointer;
 	margin-right: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 export const DeleteTagButton = styled.button`
-	width: 20%;
+	width: 100%;
 	height: 20px;
 	border-radius: 3px;
 	border: none;
@@ -151,12 +164,16 @@ export const DeleteTagButton = styled.button`
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
 export const ButtonWrapper = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	gap: 10px;
 `;
 

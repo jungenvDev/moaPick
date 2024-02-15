@@ -4,9 +4,11 @@ export const PostWrapper = styled.div`
 	width: 100%;
 	max-width: 220px;
 	min-height: 150px;
+	height: fit-content;
 	border: 1px solid #eee;
 	border-radius: 5px;
 	cursor: pointer;
+	position: relative;
 `;
 
 export const PostOGImageWrapper = styled.div`
@@ -31,7 +33,6 @@ export const PostTitle = styled.div`
 	font-size: 13px;
 	word-break: break-all;
 	display: -webkit-box;
-	//-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 `;
 
