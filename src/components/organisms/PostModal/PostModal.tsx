@@ -235,10 +235,8 @@ export const PostModal = () => {
 								setNewTag();
 							}}
 						/>
-						{/*	TODO: 태그 추가 기능*/}
 					</S.TitleWrapper>
 					<S.TagContainer>
-						{/*TODO: Tag 중 하나를 꾹 누르면 태그명 변경할 수 있는 기능*/}
 						<S.TagInputWrapper isShowNewTagInput={isShowNewTagInput}>
 							<S.TagInput
 								type='text'

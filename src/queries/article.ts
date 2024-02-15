@@ -76,13 +76,15 @@ export const useModifyArticle = () => {
 };
 
 export const useGetAllArticle = () => {
-	return useQuery<any[]>(['getArticles', 'all'], getArticle, {});
+	return useQuery<any[]>(['getArticles', 'all'], getArticle, {
+		enabled: !!accessToken,
+	});
 };
 
 export const getArticle = async () => {
 	const response = await fetch('https://moapick.p-e.kr/article/all', {
 		headers: {
-			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
+			'Content-Type': 'application/json',
 			Authorization: `Bearer ${accessToken}`,
 		},
 	});

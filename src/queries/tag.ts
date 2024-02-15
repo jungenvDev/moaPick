@@ -49,13 +49,18 @@ export const useDeleteTag = () => {
 };
 
 export const useGetAllTag = () => {
-	return useQuery<any[]>(['getTags', 'all'], getTags, {});
+	return useQuery<any[]>(['getTags', 'all'], getTags, {
+		enabled: !!accessToken,
+		onError: error => {
+			console.log('=>(tag.ts:52) error', error);
+		},
+	});
 };
 
 export const getTags = async () => {
 	const response = await fetch('https://moapick.p-e.kr/tag/all', {
 		headers: {
-			// Authorization 헤더에 'Bearer <액세스 토큰>' 형태로 토큰을 포함시킵니다.
+			'Content-Type': 'application/json',
 			Authorization: `Bearer ${accessToken}`,
 		},
 	});

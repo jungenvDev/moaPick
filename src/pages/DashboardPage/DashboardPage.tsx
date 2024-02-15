@@ -14,24 +14,38 @@ import {useAttachTag, useGetAllTag} from '../../queries/tag';
 import {selectedTagAtom} from '../../stores/tagAtom';
 
 export const DashboardPage = () => {
+	const accessToken = localStorage.getItem('accessToken');
 	const [isModalOpen, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
-	const [isModifyMode, setIsModifyMode] = useAtom(isModifyModeAtom);
-	// const {data} = useGetArticleById('50');
-	const {data: allArticle, isLoading, isError} = useGetAllArticle();
-	const {data: allTags} = useGetAllTag();
+	const [, setIsModifyMode] = useAtom(isModifyModeAtom);
+	const {
+		data: allArticle,
+		isLoading,
+		isError,
+		refetch: refetchAllArticle,
+	} = useGetAllArticle();
+	const {data: allTags, refetch: refetchAllTags} = useGetAllTag();
 	const {mutate: attachTagToArticle} = useAttachTag();
 	const longTapTimeoutRef = useRef<number | null>(null);
 	const [longTapIndex, setLongTapIndex] = useState<number | null>(null);
+	useEffect(() => {
+		// 로그인 상태 변경에 따른 데이터 재요청 로직
+		const fetchData = async () => {
+			await refetchAllArticle(); // 예시 함수, 실제 사용하는 refetch 메서드로 대체해야 함
+			await refetchAllTags(); // 예시 함수, 실제 사용하는 refetch 메서드로 대체해야 함
+		};
+
+		if (accessToken) {
+			fetchData();
+		}
+	}, [accessToken]); // 로그인 상태를 의존성 배열에 추가
 	const handleLongTapStart = (articleId: number) => {
-		// setTimeout 호출 시 반환되는 타이머 ID를 useRef에 저장
 		longTapTimeoutRef.current = window.setTimeout(() => {
 			setLongTapIndex(articleId);
 		}, 500);
 	};
 
 	const handleLongTapEnd = () => {
-		// clearTimeout에 타이머 ID를 전달하여 타이머를 취소
 		if (longTapTimeoutRef.current !== null) {
 			clearTimeout(longTapTimeoutRef.current);
 			longTapTimeoutRef.current = null;
@@ -50,12 +64,17 @@ export const DashboardPage = () => {
 			}
 		});
 
-		// 선택된 태그를 초기화합니다.
 		setSelectedTag([]);
 	}, [allArticle, attachTagToArticle, allTags]);
 
 	if (isLoading) return <div>Loading...</div>;
-	if (isError) return <div>Error: </div>;
+	if (isError) {
+		//localScript 삭제
+		localStorage.removeItem('accessToken');
+		localStorage.removeItem('userData');
+		window.location.href = '/';
+	}
+
 	return (
 		<>
 			<Gnb />
