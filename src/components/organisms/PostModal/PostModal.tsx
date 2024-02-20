@@ -30,6 +30,7 @@ export const PostModal = () => {
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [link, setLink] = useState(articleData?.article_link || '');
 	const [title, setTitle] = useState(articleData?.title || '');
+	const [isTagModifyMode, setIsTagModifyMode] = useState(-1);
 	const {data: allTags} = useGetAllTag();
 	const [tags, setTags] = useState(allTags?.map(tag => tag.title) || []);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
@@ -269,7 +270,7 @@ export const PostModal = () => {
 							/>
 						</S.TagInputWrapper>
 						{tags.map((tag, index) => (
-							<S.RadioWrapper
+							<S.CheckBoxWrapper
 								key={index}
 								onMouseDown={() => handleLongTapStart(index)}
 								onTouchStart={() => handleLongTapStart(index)}
@@ -277,7 +278,7 @@ export const PostModal = () => {
 								onMouseUp={handleLongTapEnd}
 								onMouseLeave={handleLongTapEnd}
 							>
-								<S.Tag>
+								<S.Tag index={index} isTagModifyMode={isTagModifyMode}>
 									<S.RadioInput
 										type='checkbox'
 										name='tag'
@@ -290,9 +291,34 @@ export const PostModal = () => {
 									/>{' '}
 									{tag}
 								</S.Tag>
+								{/*<S.TagInputWrapper*/}
+								{/*	isShowNewTagInput={index === isTagModifyMode}*/}
+								{/*>*/}
+								{/*	<S.ModifyTagInput*/}
+								{/*		type='text'*/}
+								{/*		value={tag}*/}
+								{/*		onChange={e => {*/}
+								{/*			const newTags = tags.slice();*/}
+								{/*			newTags[index] = e.target.value;*/}
+								{/*			setTags(newTags);*/}
+								{/*		}}*/}
+								{/*	/>*/}
+								{/*	<IoIosCheckmarkCircle*/}
+								{/*		onClick={() => {*/}
+								{/*			// addTag();*/}
+								{/*		}}*/}
+								{/*	/>*/}
+								{/*</S.TagInputWrapper>*/}
 								{longTapIndex === index && (
-									<S.TagButtonWrapper>
-										<S.ModifyTagButton>수정</S.ModifyTagButton>
+									<S.TagButtonWrapper
+										index={index}
+										isTagModifyMode={isTagModifyMode}
+									>
+										{/*<S.ModifyTagButton*/}
+										{/*	onClick={() => setIsTagModifyMode(index)}*/}
+										{/*>*/}
+										{/*	수정*/}
+										{/*</S.ModifyTagButton>*/}
 										<S.DeleteTagButton
 											onClick={() => {
 												deleteTagMutation(allTags?.[index].id);
@@ -308,7 +334,7 @@ export const PostModal = () => {
 										</S.DeleteTagButton>
 									</S.TagButtonWrapper>
 								)}
-							</S.RadioWrapper>
+							</S.CheckBoxWrapper>
 						))}
 					</S.TagContainer>
 				</S.TagWrapper>

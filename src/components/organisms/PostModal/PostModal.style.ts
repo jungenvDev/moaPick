@@ -107,7 +107,7 @@ export const TagInput = styled.input`
 	height: 30px;
 `;
 
-export const RadioWrapper = styled.div`
+export const CheckBoxWrapper = styled.div`
 	width: 100%;
 	display: flex;
 	align-items: center;
@@ -115,14 +115,20 @@ export const RadioWrapper = styled.div`
 	background-color: #eee;
 `;
 
-export const Tag = styled.span`
+export const Tag = styled.span<{index: number; isTagModifyMode: number}>`
 	width: 100%;
 	height: fit-content;
 	padding: 5px;
 	font-size: 14px;
-	display: flex;
+	display: ${({isTagModifyMode, index}) =>
+		isTagModifyMode === index ? 'none' : 'flex'};
 	align-items: center;
 	gap: 5px;
+`;
+
+export const ModifyTagInput = styled.input`
+	width: 100%;
+	height: 30px;
 `;
 
 export const RadioInput = styled.input`
@@ -132,13 +138,18 @@ export const RadioInput = styled.input`
 	align-items: center;
 `;
 
-export const TagButtonWrapper = styled.div`
-	width: 100%;
-	display: flex;
+export const TagButtonWrapper = styled.div<{
+	index: number;
+	isTagModifyMode: number;
+}>`
+	width: 50%;
+	display: ${({isTagModifyMode, index}) =>
+		isTagModifyMode === index ? 'none' : 'flex'};
 	justify-content: center;
 	align-items: center;
 	background-color: transparent;
 `;
+
 export const ModifyTagButton = styled.button`
 	width: 100%;
 	height: 20px;
@@ -154,6 +165,7 @@ export const ModifyTagButton = styled.button`
 	align-items: center;
 	justify-content: center;
 `;
+
 export const DeleteTagButton = styled.button`
 	width: 100%;
 	height: 20px;
