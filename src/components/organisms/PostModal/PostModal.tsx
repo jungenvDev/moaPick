@@ -342,7 +342,7 @@ export const PostModal = () => {
 					<S.Button onClick={handleCancel}>취소</S.Button>
 					<S.Button
 						onClick={() => {
-							isModifyMode
+							isModifyMode !== -1
 								? handleModify()
 								: handleSubmit({
 										title: title === '' ? link : title,

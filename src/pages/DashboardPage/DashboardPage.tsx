@@ -12,7 +12,7 @@ import {selectedTagAtom} from '../../stores/tagAtom';
 
 export const DashboardPage = () => {
 	const accessToken = localStorage.getItem('accessToken');
-	const [isModalOpen, setIsModalOpen] = useAtom(isPostModalOpenAtom);
+	const [isModalOpen] = useAtom(isPostModalOpenAtom);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
 
 	const {
