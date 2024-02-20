@@ -11,6 +11,25 @@ export const PostWrapper = styled.div`
 	position: relative;
 `;
 
+//EditButton
+export const EditButton = styled.div`
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	box-shadow:
+		0 0 0 1px #d4d4d5,
+		0 2px 0 0 #d4d4d5,
+		0 1px 3px 0 #d4d4d5;
+	background-color: #fff;
+	cursor: pointer;
+`;
+
 export const PostOGImageWrapper = styled.div`
 	background-color: #eee;
 	border-radius: 5px 5px 0 0;

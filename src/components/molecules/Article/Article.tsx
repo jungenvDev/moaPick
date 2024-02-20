@@ -2,25 +2,19 @@ import * as S from './Article.style';
 import {
 	deletedPostAtom,
 	isDeleteModeAtom,
+	isModifyModeAtom,
+	isPostModalOpenAtom,
 } from '../../../stores/articleModalOpen';
 import {useAtom} from 'jotai';
-import React, {useRef} from 'react';
+import React from 'react';
+import {MdModeEdit} from 'react-icons/md';
 
-export const Article = ({
-	data,
-	index,
-	handleLongTapStart,
-	handleLongTapEnd,
-}: {
-	data: any;
-	index: number;
-	handleLongTapStart: (index: number) => void;
-	handleLongTapEnd: () => void;
-}) => {
+export const Article = ({data, index}: {data: any; index: number}) => {
 	const [isDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 	const isSelected = selectedData.some(item => item.id === data.id);
-	const longTapTimeoutRef = useRef<number | null>(null);
+	const [, setIsModifyMode] = useAtom(isModifyModeAtom);
+	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const handlePostClick = () => {
 		if (isSelected) {
 			setSelectedData(selectedData.filter(item => item.id !== data.id));
@@ -31,10 +25,6 @@ export const Article = ({
 
 	return (
 		<S.PostWrapper
-			onMouseDown={() => handleLongTapStart(index)}
-			onMouseUp={() => handleLongTapEnd()}
-			onTouchStart={() => handleLongTapStart(index)}
-			onTouchEnd={() => handleLongTapEnd()}
 			onClick={e => {
 				e.stopPropagation();
 				isDeleteMode
@@ -42,6 +32,15 @@ export const Article = ({
 					: window.open(data.article_link, '_blank');
 			}}
 		>
+			<S.EditButton
+				onClick={(e: any) => {
+					e.stopPropagation(); // 클릭 이벤트가 상위로 전파되지 않도록 함
+					setIsModifyMode(index);
+					setIsModalOpen(true);
+				}}
+			>
+				<MdModeEdit />
+			</S.EditButton>
 			<S.PostOGImageWrapper>
 				<S.PostOGImage src={data.og_image_link ?? '#'} />
 			</S.PostOGImageWrapper>

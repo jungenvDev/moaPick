@@ -49,6 +49,7 @@ export const useDeleteTag = () => {
 };
 
 export const useGetAllTag = () => {
+	const accessToken = localStorage.getItem('accessToken');
 	return useQuery<any[]>(['getTags', 'all'], getTags, {
 		enabled: !!accessToken,
 		onError: error => {
@@ -84,7 +85,6 @@ export const useAttachTag = () => {
 				body: JSON.stringify(data),
 			});
 
-			console.log('=>(tag.ts:85) response', response);
 			return response;
 		},
 		{
@@ -97,17 +97,24 @@ export const useAttachTag = () => {
 
 export const useDetachTag = () => {
 	const queryClient = useQueryClient();
-	return useMutation(async (data: any) => {
-		const response = await fetch('https://moapick.p-e.kr/tag/detach', {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(data),
-		});
+	return useMutation(
+		async (data: any) => {
+			const response = await fetch('https://moapick.p-e.kr/tag/detach', {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${accessToken}`,
+				},
+				body: JSON.stringify(data),
+			});
 
-		console.log('=>(tag.ts:99) response', response);
-		return response;
-	});
+			console.log('=>(tag.ts:99) response', response);
+			return response;
+		},
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries(['getArticles', 'all']);
+			},
+		},
+	);
 };

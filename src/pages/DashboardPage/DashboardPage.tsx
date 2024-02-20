@@ -3,13 +3,10 @@ import * as S from './DashboardPage.style';
 import {FloatingButton} from '../../components/atoms/DashboardPage/FloatingButton/FloatingButton';
 import {PostModal} from '../../components/organisms/PostModal/PostModal';
 import {useAtom} from 'jotai';
-import {
-	isModifyModeAtom,
-	isPostModalOpenAtom,
-} from '../../stores/articleModalOpen';
+import {isPostModalOpenAtom} from '../../stores/articleModalOpen';
 import {useGetAllArticle} from '../../queries/article';
 import {Article} from '../../components/molecules/Article/Article';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useAttachTag, useGetAllTag} from '../../queries/tag';
 import {selectedTagAtom} from '../../stores/tagAtom';
 
@@ -17,7 +14,7 @@ export const DashboardPage = () => {
 	const accessToken = localStorage.getItem('accessToken');
 	const [isModalOpen, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
-	const [, setIsModifyMode] = useAtom(isModifyModeAtom);
+
 	const {
 		data: allArticle,
 		isLoading,
@@ -26,31 +23,19 @@ export const DashboardPage = () => {
 	} = useGetAllArticle();
 	const {data: allTags, refetch: refetchAllTags} = useGetAllTag();
 	const {mutate: attachTagToArticle} = useAttachTag();
-	const longTapTimeoutRef = useRef<number | null>(null);
-	const [longTapIndex, setLongTapIndex] = useState<number | null>(null);
+
 	useEffect(() => {
 		// 로그인 상태 변경에 따른 데이터 재요청 로직
 		const fetchData = async () => {
-			await refetchAllArticle(); // 예시 함수, 실제 사용하는 refetch 메서드로 대체해야 함
-			await refetchAllTags(); // 예시 함수, 실제 사용하는 refetch 메서드로 대체해야 함
+			await refetchAllArticle();
+			await refetchAllTags();
 		};
 
 		if (accessToken) {
 			fetchData();
 		}
 	}, [accessToken]); // 로그인 상태를 의존성 배열에 추가
-	const handleLongTapStart = (articleId: number) => {
-		longTapTimeoutRef.current = window.setTimeout(() => {
-			setLongTapIndex(articleId);
-		}, 500);
-	};
 
-	const handleLongTapEnd = () => {
-		if (longTapTimeoutRef.current !== null) {
-			clearTimeout(longTapTimeoutRef.current);
-			longTapTimeoutRef.current = null;
-		}
-	};
 	useEffect(() => {
 		if (selectedTag.length === 0) return;
 		selectedTag.forEach(selectedTag => {
@@ -88,32 +73,30 @@ export const DashboardPage = () => {
 								?.filter(
 									item => item.tags?.some((t: any) => t.title === tag.title),
 								)
-								.map(filteredItem => (
-									<>
-										<Article
-											key={filteredItem.id}
-											data={filteredItem}
-											index={index}
-											handleLongTapStart={() =>
-												handleLongTapStart(filteredItem.id)
-											}
-											handleLongTapEnd={handleLongTapEnd}
-										/>
-										{longTapIndex === filteredItem.id && (
-											<S.ArticleButtonWrapper>
-												<S.ModifyArticleButton
-													onClick={() => {
-														setIsModalOpen(true);
-														setIsModifyMode(filteredItem.id);
-													}}
-												>
-													수정
-												</S.ModifyArticleButton>
-												<S.DeleteArticleButton>삭제</S.DeleteArticleButton>
-											</S.ArticleButtonWrapper>
-										)}
-									</>
-								))}
+								.map(filteredItem => {
+									return (
+										<>
+											<Article
+												key={filteredItem.id}
+												data={filteredItem}
+												index={filteredItem.id}
+											/>
+											{/*{longTapIndex && (*/}
+											{/*	<S.ArticleButtonWrapper>*/}
+											{/*		<S.ModifyArticleButton*/}
+											{/*			onClick={() => {*/}
+											{/*				setIsModalOpen(true);*/}
+											{/*				setIsModifyMode(filteredItem.id);*/}
+											{/*			}}*/}
+											{/*		>*/}
+											{/*			수정*/}
+											{/*		</S.ModifyArticleButton>*/}
+											{/*		<S.DeleteArticleButton>삭제</S.DeleteArticleButton>*/}
+											{/*	</S.ArticleButtonWrapper>*/}
+											{/*)}*/}
+										</>
+									);
+								})}
 							<FloatingButton />
 						</S.DashboardWrapper>
 					</React.Fragment>
@@ -129,9 +112,7 @@ export const DashboardPage = () => {
 								<Article
 									key={filteredItem.id}
 									data={filteredItem}
-									index={-1}
-									handleLongTapStart={() => handleLongTapStart(filteredItem.id)}
-									handleLongTapEnd={handleLongTapEnd}
+									index={filteredItem.id}
 								/>
 							))}
 						<FloatingButton />

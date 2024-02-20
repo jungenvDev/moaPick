@@ -16,6 +16,7 @@ import {
 } from '../../../queries/article';
 import {
 	useAddTags,
+	useAttachTag,
 	useDeleteTag,
 	useDetachTag,
 	useGetAllTag,
@@ -26,7 +27,6 @@ import {SelectedTag} from '../../../type/article';
 export const PostModal = () => {
 	const [isModifyMode] = useAtom(isModifyModeAtom);
 	const {data: articleData} = useGetArticleById(isModifyMode);
-	console.log('=>(PostModal.tsx:28) articleData', articleData);
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
 	const [link, setLink] = useState(articleData?.article_link || '');
 	const [title, setTitle] = useState(articleData?.title || '');
@@ -45,6 +45,7 @@ export const PostModal = () => {
 	const {mutate: addTagMutation} = useAddTags();
 	const {mutate: deleteTagMutation} = useDeleteTag();
 	const {mutate: detachTagMutation} = useDetachTag();
+	const {mutate: attachTagMutation} = useAttachTag();
 
 	useEffect(() => {
 		if (linkInputRef.current) {
@@ -153,7 +154,6 @@ export const PostModal = () => {
 			handleSubmit({title: link, link: link});
 		}
 	};
-
 	const handleModify = () => {
 		if (!link) {
 			setLinkErrorMessage('링크를 입력해주세요.');
@@ -164,6 +164,24 @@ export const PostModal = () => {
 		}
 
 		setLinkErrorMessage('');
+		articleData.tags.map((tag: any) => {
+			detachTagMutation({
+				article_id: isModifyMode,
+				tag_id: tag.id,
+			});
+		});
+
+		if (selectedTag.length === 0) return;
+		selectedTag.forEach(selectedTag => {
+			const tag = allTags?.find(tag => tag.title === selectedTag.name);
+
+			if (tag) {
+				attachTagMutation({
+					article_id: allArticle?.[allArticle.length - 1].id,
+					tag_id: tag.id,
+				});
+			}
+		});
 		modifyArticleMutation({
 			id: isModifyMode,
 			title: title === '' ? link : title,
@@ -185,7 +203,7 @@ export const PostModal = () => {
 					</S.TitleWrapper>
 					<S.LinkInputContainer>
 						<S.LinkInput
-							disabled={!!isModifyMode}
+							disabled={isModifyMode !== -1}
 							ref={linkInputRef}
 							type='text'
 							value={link}
