@@ -10,15 +10,31 @@ import {
 	useDeleteArticleFromServer,
 	useGetAllArticle,
 } from '../../../queries/article';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 export const Gnb = () => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
 	const [showLogoutDropdown, setShowLogoutDropdown] = useState(false);
-
+	const logoutRef = useRef<HTMLButtonElement>(null);
 	const {refetch} = useGetAllArticle();
 	const {mutate: deleteDataMutation} = useDeleteArticleFromServer();
+
+	useEffect(() => {
+		// 외부 클릭을 감지하는 함수
+		function handleClickOutside(event: any) {
+			if (logoutRef.current && !logoutRef.current.contains(event.target)) {
+				setShowLogoutDropdown(false); // 로그아웃 버튼의 외부 클릭 시 드롭다운 숨김
+			}
+		}
+
+		// 문서에 클릭 이벤트 리스너 추가
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			// 컴포넌트 언마운트 시 이벤트 리스너 제거
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [logoutRef]); // ref가 변경될 때마다 useEffect 실행
 
 	function handleLogout() {
 		//localScript 삭제
@@ -73,7 +89,7 @@ export const Gnb = () => {
 				</S.ButtonWrapper>
 			</S.GnbWrapper>
 			{showLogoutDropdown && (
-				<S.LogoutButton>
+				<S.LogoutButton ref={logoutRef}>
 					<button onClick={handleLogout}>로그아웃</button>
 				</S.LogoutButton>
 			)}
