@@ -1,8 +1,8 @@
 import {useMutation, useQuery, useQueryClient} from 'react-query';
-
-const accessToken = localStorage.getItem('accessToken');
+import {getCookie} from '../util/cookie';
 
 export const useAddTags = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
 		const response = await fetch('https://moapick.p-e.kr/tag', {
@@ -24,6 +24,7 @@ export const useAddTags = () => {
 };
 
 export const useDeleteTag = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(
 		async (tagId: number) => {
@@ -49,7 +50,7 @@ export const useDeleteTag = () => {
 };
 
 export const useGetAllTag = () => {
-	const accessToken = localStorage.getItem('accessToken');
+	const accessToken = getCookie('accessToken');
 	return useQuery<any[]>(['getTags', 'all'], getTags, {
 		enabled: !!accessToken,
 		onError: error => {
@@ -59,6 +60,7 @@ export const useGetAllTag = () => {
 };
 
 export const getTags = async () => {
+	const accessToken = getCookie('accessToken');
 	const response = await fetch('https://moapick.p-e.kr/tag/all', {
 		headers: {
 			'Content-Type': 'application/json',
@@ -73,6 +75,7 @@ export const getTags = async () => {
 };
 
 export const useAttachTag = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(
 		async (data: any) => {
@@ -96,6 +99,7 @@ export const useAttachTag = () => {
 };
 
 export const useDetachTag = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(
 		async (data: any) => {

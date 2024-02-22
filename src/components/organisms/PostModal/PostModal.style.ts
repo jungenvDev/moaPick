@@ -131,7 +131,7 @@ export const ModifyTagInput = styled.input`
 	height: 30px;
 `;
 
-export const RadioInput = styled.input`
+export const CheckboxInput = styled.input`
 	width: 15px;
 	height: 15px;
 	display: flex;

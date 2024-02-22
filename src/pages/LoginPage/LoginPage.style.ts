@@ -9,10 +9,11 @@ export const LoginPageWrapper = styled.div`
 	height: calc(100vh - 50px);
 `;
 
-export const MoaPickLogo = styled.div`
+export const MoaPickLogo = styled.img`
 	width: 200px;
 	height: 200px;
-	background-color: #fbd9ea;
+
+	-webkit-user-drag: none;
 `;
 export const LoginButtonContainer = styled.div`
 	cursor: pointer;

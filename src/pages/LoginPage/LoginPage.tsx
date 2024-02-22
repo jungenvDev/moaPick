@@ -9,6 +9,7 @@ import {
 	useSignIn,
 } from '../../queries/auth';
 import {useEffect} from 'react';
+import {getCookie, setCookie} from '../../util/cookie';
 
 export const LoginPage = () => {
 	const [, setIsUserLoggedIn] = useAtom(isUserLoggedInAtom);
@@ -23,13 +24,13 @@ export const LoginPage = () => {
 				signIn(userData.email, {
 					onSuccess: response => {
 						// 로컬 스토리지에 access_token 저장
-						localStorage.setItem('accessToken', response.access_token);
+						setCookie('accessToken', response.access_token, 7); // 토큰을 7일 동안 유효한 쿠키로 설정
 						logInMutation.mutate(response.access_token, {
 							onSuccess: data => {
 								setIsUserLoggedIn(true);
 								setUserData(data);
 								// 로컬 스토리지에 사용자 데이터 저장 (예: JSON 형태로)
-								localStorage.setItem('userData', JSON.stringify(data));
+								setCookie('userData', JSON.stringify(data), 7);
 							},
 							onError: error => {
 								console.error('로그인 오류', error);
@@ -47,11 +48,11 @@ export const LoginPage = () => {
 
 	// 애플리케이션 로드 시 로그인 상태 확인
 	useEffect(() => {
-		const token = localStorage.getItem('accessToken');
-		const userDataString = localStorage.getItem('userData')!;
+		const token = getCookie('accessToken');
+		const userDataString = getCookie('userData');
 		if (token) {
 			// 로컬 스토리지에서 토큰을 가져와서 로그인 상태 유지
-			const userData = JSON.parse(userDataString);
+			const userData = userDataString;
 			if (userData) {
 				setIsUserLoggedIn(true);
 				setUserData(userData);
@@ -60,7 +61,7 @@ export const LoginPage = () => {
 	}, []);
 	return (
 		<S.LoginPageWrapper>
-			<S.MoaPickLogo>모아픽 로고</S.MoaPickLogo>
+			<S.MoaPickLogo src={'/image/logo.png'} />
 			<S.LoginButtonContainer onClick={() => login()}>
 				<GoogleLoginLogo /> Google 계정으로 로그인
 			</S.LoginButtonContainer>

@@ -9,9 +9,10 @@ import {Article} from '../../components/molecules/Article/Article';
 import React, {useEffect} from 'react';
 import {useAttachTag, useGetAllTag} from '../../queries/tag';
 import {selectedTagAtom} from '../../stores/tagAtom';
+import {getCookie, setCookie} from '../../util/cookie';
 
 export const DashboardPage = () => {
-	const accessToken = localStorage.getItem('accessToken');
+	const accessToken = getCookie('accessToken');
 	const [isModalOpen] = useAtom(isPostModalOpenAtom);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
 
@@ -40,6 +41,7 @@ export const DashboardPage = () => {
 		if (selectedTag.length === 0) return;
 		selectedTag.forEach(selectedTag => {
 			const tag = allTags?.find(tag => tag.title === selectedTag.name);
+			console.log('=>(DashboardPage.tsx:44) tag', tag);
 
 			if (tag) {
 				attachTagToArticle({
@@ -55,8 +57,8 @@ export const DashboardPage = () => {
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) {
 		//localScript 삭제
-		localStorage.removeItem('accessToken');
-		localStorage.removeItem('userData');
+		setCookie('accessToken', '', 0);
+		setCookie('userData', '', 0);
 		window.location.href = '/';
 	}
 
@@ -64,61 +66,42 @@ export const DashboardPage = () => {
 		<>
 			<Gnb />
 			{isModalOpen && <PostModal />}
-			<S.TagWrapper>
+			<S.ContentWrapper>
+				{/* 태그가 있는 기사 그룹 */}
 				{allTags?.map((tag: any, index: number) => (
 					<React.Fragment key={tag.id}>
 						<S.Tag index={index}>{tag.title}</S.Tag>
-						<S.DashboardWrapper>
+						<S.ArticleWrapper>
 							{allArticle
 								?.filter(
 									item => item.tags?.some((t: any) => t.title === tag.title),
 								)
-								.map(filteredItem => {
-									return (
-										<>
-											<Article
-												key={filteredItem.id}
-												data={filteredItem}
-												index={filteredItem.id}
-											/>
-											{/*{longTapIndex && (*/}
-											{/*	<S.ArticleButtonWrapper>*/}
-											{/*		<S.ModifyArticleButton*/}
-											{/*			onClick={() => {*/}
-											{/*				setIsModalOpen(true);*/}
-											{/*				setIsModifyMode(filteredItem.id);*/}
-											{/*			}}*/}
-											{/*		>*/}
-											{/*			수정*/}
-											{/*		</S.ModifyArticleButton>*/}
-											{/*		<S.DeleteArticleButton>삭제</S.DeleteArticleButton>*/}
-											{/*	</S.ArticleButtonWrapper>*/}
-											{/*)}*/}
-										</>
-									);
-								})}
+								.map(filteredItem => (
+									<Article
+										key={filteredItem.id}
+										data={filteredItem}
+										index={filteredItem.id}
+									/>
+								))}
 							<FloatingButton />
-						</S.DashboardWrapper>
+						</S.ArticleWrapper>
 					</React.Fragment>
 				))}
-				<>
-					<S.Tag index={-1}>태그없음</S.Tag>
-					<S.DashboardWrapper>
-						{allArticle
-							?.filter(
-								item => item.tags === undefined || item.tags?.length === 0,
-							)
-							.map(filteredItem => (
-								<Article
-									key={filteredItem.id}
-									data={filteredItem}
-									index={filteredItem.id}
-								/>
-							))}
-						<FloatingButton />
-					</S.DashboardWrapper>
-				</>
-			</S.TagWrapper>
+				{/* 태그가 없는 기사 그룹 */}
+				<S.Tag index={-1}>태그없음</S.Tag>
+				<S.ArticleWrapper>
+					{allArticle
+						?.filter(item => !item.tags || item.tags?.length === 0)
+						.map(filteredItem => (
+							<Article
+								key={filteredItem.id}
+								data={filteredItem}
+								index={filteredItem.id}
+							/>
+						))}
+					<FloatingButton />
+				</S.ArticleWrapper>
+			</S.ContentWrapper>
 		</>
 	);
 };

@@ -8,8 +8,8 @@ export const GlobalStyle = createGlobalStyle`
       font-family: 'Pretendard', 'Noto Sans Kannada' ,sans-serif;
     }
     body {
-      background-color: #f5f5f5;
-      height: 100vh;
+      background-color: #fff;
+      min-height: 100vh;
     }
     div{
       max-width: 500px;

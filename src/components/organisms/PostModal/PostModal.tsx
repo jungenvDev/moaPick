@@ -165,7 +165,7 @@ export const PostModal = () => {
 		}
 
 		setLinkErrorMessage('');
-		articleData.tags.map((tag: any) => {
+		articleData.tags?.map((tag: any) => {
 			detachTagMutation({
 				article_id: isModifyMode,
 				tag_id: tag.id,
@@ -173,7 +173,7 @@ export const PostModal = () => {
 		});
 
 		if (selectedTag.length === 0) return;
-		selectedTag.forEach(selectedTag => {
+		selectedTag?.forEach(selectedTag => {
 			const tag = allTags?.find(tag => tag.title === selectedTag.name);
 
 			if (tag) {
@@ -279,7 +279,7 @@ export const PostModal = () => {
 								onMouseLeave={handleLongTapEnd}
 							>
 								<S.Tag index={index} isTagModifyMode={isTagModifyMode}>
-									<S.RadioInput
+									<S.CheckboxInput
 										type='checkbox'
 										name='tag'
 										value={tag}

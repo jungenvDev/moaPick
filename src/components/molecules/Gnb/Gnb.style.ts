@@ -13,7 +13,12 @@ export const GnbWrapper = styled.div`
 	font-size: 24px;
 	flex: 1;
 	z-index: 10;
-	background-color: rgba(149, 218, 243, 0.79);
+	background-color: #f8f7f5;
+`;
+
+export const GnbLogo = styled.img`
+	width: fit-content;
+	height: 25px;
 `;
 
 export const ButtonWrapper = styled.span`
@@ -45,16 +50,24 @@ export const LogoutButton = styled.button`
 	padding: 0.5em 1em;
 	font-size: 15px;
 	cursor: pointer;
-	width: 100px;
-	height: 30px;
+	width: fit-content;
+	height: fit-content;
 	position: absolute;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	transform: translate(400px, 50px);
+	transform: translate(0, 30px);
 	z-index: 11;
+	gap: 10px;
 	box-shadow:
 		0 0 0 1px #d4d4d5,
 		0 2px 0 0 #d4d4d5,
 		0 1px 3px 0 #d4d4d5;
+`;
+
+export const HelloUser = styled.span`
+	font-size: 16px;
+	border-bottom: 1px solid #000;
+	white-space: nowrap;
 `;

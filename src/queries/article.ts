@@ -1,7 +1,8 @@
 import {useMutation, useQuery, useQueryClient} from 'react-query';
+import {getCookie} from '../util/cookie';
 
-const accessToken = localStorage.getItem('accessToken');
 export const useAddArticleToServer = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
 		const response = await fetch('https://moapick.p-e.kr/article', {
@@ -23,6 +24,7 @@ export const useAddArticleToServer = () => {
 };
 
 export const useDeleteArticleFromServer = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(async (selectedIds: any) => {
 		const response = await fetch(
@@ -50,6 +52,7 @@ export const useDeleteArticleFromServer = () => {
 };
 
 export const useModifyArticle = () => {
+	const accessToken = getCookie('accessToken');
 	const queryClient = useQueryClient();
 	return useMutation(async (data: any) => {
 		const response = await fetch(
@@ -76,13 +79,14 @@ export const useModifyArticle = () => {
 };
 
 export const useGetAllArticle = () => {
-	const accessToken = localStorage.getItem('accessToken');
+	const accessToken = getCookie('accessToken');
 	return useQuery<any[]>(['getArticles', 'all'], getArticle, {
 		enabled: !!accessToken,
 	});
 };
 
 export const getArticle = async () => {
+	const accessToken = getCookie('accessToken');
 	const response = await fetch('https://moapick.p-e.kr/article/all', {
 		headers: {
 			'Content-Type': 'application/json',
@@ -101,10 +105,16 @@ export const useGetArticleById = (id: number) => {
 };
 
 export const getArticleById = async (id: number) => {
+	if (id === -1) {
+		return null; // 또는 다른 적절한 처리
+	}
+
+	const accessToken = getCookie('accessToken');
 	const response = await fetch(`https://moapick.p-e.kr/article/${id}`, {
 		headers: {
 			Authorization: `Bearer ${accessToken}`,
 		},
 	});
+
 	return response.json(); // 데이터를 반환합니다.
 };

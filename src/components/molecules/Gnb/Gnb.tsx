@@ -11,10 +11,13 @@ import {
 	useGetAllArticle,
 } from '../../../queries/article';
 import {useEffect, useRef, useState} from 'react';
+import {setCookie} from '../../../util/cookie';
+import {userAtom} from '../../../stores/googleLogin';
 
 export const Gnb = () => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
+	const [userData] = useAtom(userAtom);
 	const [showLogoutDropdown, setShowLogoutDropdown] = useState(false);
 	const logoutRef = useRef<HTMLButtonElement>(null);
 	const {refetch} = useGetAllArticle();
@@ -36,8 +39,8 @@ export const Gnb = () => {
 
 	function handleLogout() {
 		//localScript 삭제
-		localStorage.removeItem('accessToken');
-		localStorage.removeItem('userData');
+		setCookie('accessToken', '', 0);
+		setCookie('userData', '', 0);
 		window.location.href = '/';
 	}
 
@@ -62,7 +65,7 @@ export const Gnb = () => {
 	return (
 		<>
 			<S.GnbWrapper>
-				<span onClick={() => {}}> MOAPICK</span>
+				<S.GnbLogo src={'/image/gnb-logo.png'} />
 				<S.ButtonWrapper>
 					{/*TODO: 삭제할 데이터가 없을 때는 모드 전환X, 토스트 메시지*/}
 					{isDeleteMode ? (
@@ -82,13 +85,16 @@ export const Gnb = () => {
 							setShowLogoutDropdown(!showLogoutDropdown);
 						}}
 					/>
+					{showLogoutDropdown && (
+						<S.LogoutButton ref={logoutRef}>
+							{/*<S.HelloUser>*/}
+							{/*	안녕하세요! <br /> {userData.email}님!*/}
+							{/*</S.HelloUser>*/}
+							<button onClick={handleLogout}>로그아웃</button>
+						</S.LogoutButton>
+					)}
 				</S.ButtonWrapper>
 			</S.GnbWrapper>
-			{showLogoutDropdown && (
-				<S.LogoutButton ref={logoutRef}>
-					<button onClick={handleLogout}>로그아웃</button>
-				</S.LogoutButton>
-			)}
 		</>
 	);
 };
