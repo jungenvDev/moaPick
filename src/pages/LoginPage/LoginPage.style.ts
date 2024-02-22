@@ -6,7 +6,8 @@ export const LoginPageWrapper = styled.div`
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: calc(100vh - 50px);
+	height: 100vh;
+	background-color: #f8f7f5;
 `;
 
 export const MoaPickLogo = styled.img`
