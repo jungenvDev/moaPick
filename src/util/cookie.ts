@@ -15,7 +15,7 @@ export const setCookie = (name: string, value: any, days: number) => {
 	if (typeof document !== 'undefined') {
 		let expires = '';
 		const domain = document.location.hostname.includes('moapick')
-			? '.moapick.p-e.kr'
+			? '.moapick.vercel.app'
 			: document.location.hostname;
 		if (days) {
 			const date = new Date();
