@@ -42,7 +42,13 @@ export const Article = ({data, index}: {data: any; index: number}) => {
 				<MdModeEdit />
 			</S.EditButton>
 			<S.PostOGImageWrapper>
-				<S.PostOGImage src={data.og_image_link ?? '#'} />
+				<S.PostOGImage
+					src={
+						data.og_image_link === ''
+							? '/image/blank-article.png'
+							: data.og_image_link
+					}
+				/>
 			</S.PostOGImageWrapper>
 			<S.PostContentWrapper>
 				<S.PostCheckboxWrapper isDeleteMode={isDeleteMode}>
@@ -52,7 +58,12 @@ export const Article = ({data, index}: {data: any; index: number}) => {
 						onChange={handlePostClick}
 					/>
 				</S.PostCheckboxWrapper>
-				<S.PostTitle>{data.title}</S.PostTitle>
+				<S.PostTitleWrapper>
+					<S.PostTitleImage src={'image/article-title.png'} />
+					<S.PostTitle>
+						{data.title === '' ? data.link : data.title}
+					</S.PostTitle>
+				</S.PostTitleWrapper>
 			</S.PostContentWrapper>
 		</S.PostWrapper>
 	);

@@ -71,3 +71,8 @@ export const HelloUser = styled.span`
 	border-bottom: 1px solid #000;
 	white-space: nowrap;
 `;
+
+export const DeleteIcon = styled.img`
+	width: 25px;
+	height: 25px;
+`;

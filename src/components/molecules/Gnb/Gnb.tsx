@@ -1,5 +1,4 @@
 import * as S from './Gnb.style';
-import {FaRegTrashCan} from 'react-icons/fa6';
 import {IoMdMore} from 'react-icons/io';
 import {useAtom} from 'jotai';
 import {
@@ -74,7 +73,8 @@ export const Gnb = () => {
 							<S.Button onClick={() => setIsDeleteMode(false)}>취소</S.Button>
 						</>
 					) : (
-						<FaRegTrashCan
+						<S.DeleteIcon
+							src={'/image/trash.png'}
 							onClick={() => {
 								setIsDeleteMode(true);
 							}}

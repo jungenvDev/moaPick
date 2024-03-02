@@ -5,13 +5,12 @@ export const PostWrapper = styled.div`
 	max-width: 220px;
 	min-height: 150px;
 	height: fit-content;
-	border: 1px solid #eee;
+	border: 1px solid #f8f7f5;
 	border-radius: 5px;
 	cursor: pointer;
 	position: relative;
 `;
 
-//EditButton
 export const EditButton = styled.div`
 	position: absolute;
 	top: -10px;
@@ -45,10 +44,24 @@ export const PostOGImage = styled.img`
 
 export const PostContentWrapper = styled.div`
 	height: fit-content;
-	padding: 3px 5px;
+	background-color: #f8f7f5;
 `;
 
-export const PostTitle = styled.div`
+export const PostTitleWrapper = styled.div`
+	position: relative;
+	display: inline-block;
+	background-color: #f8f7f5;
+`;
+
+export const PostTitleImage = styled.img`
+	width: 100%;
+	height: 100%;
+`;
+
+export const PostTitle = styled.p`
+	position: absolute;
+	top: 20px;
+	left: 3px;
 	font-size: 13px;
 	word-break: break-all;
 	display: -webkit-box;
