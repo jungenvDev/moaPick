@@ -60,19 +60,24 @@ export const PostTitleImage = styled.img`
 
 export const PostTitle = styled.p`
 	position: absolute;
-	top: 20px;
-	left: 3px;
+	top: 22px;
+	left: 10px;
 	font-size: 13px;
 	word-break: break-all;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
+	line-height: 150%;
 `;
 
 export const PostCheckboxWrapper = styled.div<{isDeleteMode: boolean}>`
-	position: relative;
+	position: absolute;
 	display: ${({isDeleteMode}) => (isDeleteMode ? 'block' : 'none')};
 	height: fit-content;
 	width: fit-content;
+	top: 0;
+	left: 0;
+	background-color: transparent;
+	z-index: 10;
 `;
 
 export const PostCheckbox = styled.input`
