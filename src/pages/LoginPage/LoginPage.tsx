@@ -62,7 +62,10 @@ export const LoginPage = () => {
 	return (
 		<S.LoginPageWrapper>
 			<S.MoaPickLogo src={'/image/logo.png'} />
-			<S.LoginButtonContainer onClick={() => login()}>
+			<S.LoginButtonContainer
+				onClick={() => login()}
+				onTouchStart={() => login()}
+			>
 				<GoogleLoginLogo /> Google 계정으로 로그인
 			</S.LoginButtonContainer>
 		</S.LoginPageWrapper>
