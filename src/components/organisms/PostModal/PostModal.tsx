@@ -20,6 +20,7 @@ import {
 	useDeleteTag,
 	useDetachTag,
 	useGetAllTag,
+	useModifyTag,
 } from '../../../queries/tag';
 import {selectedTagAtom} from '../../../stores/tagAtom';
 import {SelectedTag} from '../../../type/article';
@@ -28,9 +29,9 @@ export const PostModal = () => {
 	const [isModifyMode] = useAtom(isModifyModeAtom);
 	const {data: articleData} = useGetArticleById(isModifyMode);
 	const [, setIsModalOpen] = useAtom(isPostModalOpenAtom);
-	const [link, setLink] = useState(articleData?.article_link || '');
-	const [title, setTitle] = useState(articleData?.title || '');
-	const [isTagModifyMode, setIsTagModifyMode] = useState(-1);
+	const [link, setLink] = useState(articleData?.article_link);
+	const [title, setTitle] = useState(articleData?.title);
+	const [modifyTagIndex, setModifyTagIndex] = useState(-1);
 	const {data: allTags} = useGetAllTag();
 	const [tags, setTags] = useState(allTags?.map(tag => tag.title) || []);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
@@ -39,7 +40,7 @@ export const PostModal = () => {
 	const [isShowNewTagInput, setIsShowNewTagInput] = useState(false);
 	const [newTagName, setNewTagName] = useState('');
 	const linkInputRef = useRef<HTMLInputElement>(null);
-	const {data: allArticle, refetch: allArticleRefetch} = useGetAllArticle();
+	const {data: allArticle} = useGetAllArticle();
 
 	const {mutate: addArticleMutation} = useAddArticleToServer();
 	const {mutate: modifyArticleMutation} = useModifyArticle();
@@ -47,6 +48,7 @@ export const PostModal = () => {
 	const {mutate: deleteTagMutation} = useDeleteTag();
 	const {mutate: detachTagMutation} = useDetachTag();
 	const {mutate: attachTagMutation} = useAttachTag();
+	const {mutate: modifyTagMutation} = useModifyTag();
 
 	useEffect(() => {
 		if (linkInputRef.current) {
@@ -102,6 +104,15 @@ export const PostModal = () => {
 			setTags([...tags, newTagName]);
 			setNewTagName('');
 		}
+	};
+
+	const modifyTag = () => {
+		modifyTagMutation({tagId: allTags?.[modifyTagIndex].id, title: newTagName});
+		setTags(
+			tags.map((tag, index) => (index === modifyTagIndex ? newTagName : tag)),
+		);
+		setModifyTagIndex(-1);
+		setNewTagName('');
 	};
 
 	const handleLinkChange = (e: any) => {
@@ -172,7 +183,11 @@ export const PostModal = () => {
 			});
 		});
 
-		if (selectedTag.length === 0) return;
+		if (selectedTag.length === 0) {
+			setIsModalOpen(false);
+			return;
+		}
+
 		selectedTag?.forEach(selectedTag => {
 			const tag = allTags?.find(tag => tag.title === selectedTag.name);
 
@@ -278,7 +293,7 @@ export const PostModal = () => {
 								onMouseUp={handleLongTapEnd}
 								onMouseLeave={handleLongTapEnd}
 							>
-								<S.Tag index={index} isTagModifyMode={isTagModifyMode}>
+								<S.Tag isTagModifyMode={modifyTagIndex === index}>
 									<S.CheckboxInput
 										type='checkbox'
 										name='tag'
@@ -291,34 +306,27 @@ export const PostModal = () => {
 									/>{' '}
 									{tag}
 								</S.Tag>
-								{/*<S.TagInputWrapper*/}
-								{/*	isShowNewTagInput={index === isTagModifyMode}*/}
-								{/*>*/}
-								{/*	<S.ModifyTagInput*/}
-								{/*		type='text'*/}
-								{/*		value={tag}*/}
-								{/*		onChange={e => {*/}
-								{/*			const newTags = tags.slice();*/}
-								{/*			newTags[index] = e.target.value;*/}
-								{/*			setTags(newTags);*/}
-								{/*		}}*/}
-								{/*	/>*/}
-								{/*	<IoIosCheckmarkCircle*/}
-								{/*		onClick={() => {*/}
-								{/*			// addTag();*/}
-								{/*		}}*/}
-								{/*	/>*/}
-								{/*</S.TagInputWrapper>*/}
+								<S.TagInputWrapper isShowNewTagInput={index === modifyTagIndex}>
+									<S.ModifyTagInput
+										type='text'
+										value={newTagName}
+										onChange={e => {
+											setNewTagName(e.target.value);
+										}}
+									/>
+									<IoIosCheckmarkCircle
+										onClick={() => {
+											modifyTag();
+										}}
+									/>
+								</S.TagInputWrapper>
 								{longTapIndex === index && (
 									<S.TagButtonWrapper
-										index={index}
-										isTagModifyMode={isTagModifyMode}
+										isTagModifyMode={modifyTagIndex === index}
 									>
-										{/*<S.ModifyTagButton*/}
-										{/*	onClick={() => setIsTagModifyMode(index)}*/}
-										{/*>*/}
-										{/*	수정*/}
-										{/*</S.ModifyTagButton>*/}
+										<S.ModifyTagButton onClick={() => setModifyTagIndex(index)}>
+											수정
+										</S.ModifyTagButton>
 										<S.DeleteTagButton
 											onClick={() => {
 												deleteTagMutation(allTags?.[index].id);

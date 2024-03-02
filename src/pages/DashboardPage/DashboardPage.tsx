@@ -42,6 +42,7 @@ export const DashboardPage = () => {
 		selectedTag.forEach(selectedTag => {
 			const tag = allTags?.find(tag => tag.title === selectedTag.name);
 			console.log('=>(DashboardPage.tsx:44) tag', tag);
+			//TODO: 태그 삭제 기능 수정(찾기 힘들다고함)
 
 			if (tag) {
 				attachTagToArticle({
@@ -56,6 +57,8 @@ export const DashboardPage = () => {
 
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) {
+		//로그인이 필요합니다 alert
+		alert('로그인이 필요합니다.');
 		//localScript 삭제
 		setCookie('accessToken', '', 0);
 		setCookie('userData', '', 0);
@@ -63,7 +66,7 @@ export const DashboardPage = () => {
 	}
 
 	return (
-		<>
+		<S.DashboardPageWrapper>
 			<Gnb />
 			{isModalOpen && <PostModal />}
 			<S.ContentWrapper>
@@ -87,7 +90,7 @@ export const DashboardPage = () => {
 						</S.ArticleWrapper>
 					</React.Fragment>
 				))}
-				{/* 태그가 없는 기사 그룹 */}
+				{/* 태그가 없는 그룹 */}
 				<S.Tag index={-1}>태그없음</S.Tag>
 				<S.ArticleWrapper>
 					{allArticle
@@ -102,6 +105,6 @@ export const DashboardPage = () => {
 					<FloatingButton />
 				</S.ArticleWrapper>
 			</S.ContentWrapper>
-		</>
+		</S.DashboardPageWrapper>
 	);
 };

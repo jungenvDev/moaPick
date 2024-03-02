@@ -112,12 +112,35 @@ export const useDetachTag = () => {
 				body: JSON.stringify(data),
 			});
 
-			console.log('=>(tag.ts:99) response', response);
 			return response;
 		},
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries(['getArticles', 'all']);
+			},
+		},
+	);
+};
+
+export const useModifyTag = () => {
+	const accessToken = getCookie('accessToken');
+	const queryClient = useQueryClient();
+	return useMutation(
+		async ({tagId, title}: {tagId: number; title: string}) => {
+			const response = await fetch(`https://moapick.p-e.kr/tag/${tagId}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${accessToken}`,
+				},
+				body: JSON.stringify({title}),
+			});
+
+			return response;
+		},
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries(['getTags', 'all']);
 			},
 		},
 	);

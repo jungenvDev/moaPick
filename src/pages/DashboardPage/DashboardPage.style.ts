@@ -1,8 +1,17 @@
 import styled from 'styled-components';
 
+export const DashboardPageWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	height: 100vh;
+	background-color: #f8f7f5;
+`;
+
 export const ContentWrapper = styled.div`
-	height: 100%;
-	min-height: 100vh;
+	height: fit-content;
 	width: 100%;
 	display: flex;
 	flex-wrap: wrap;

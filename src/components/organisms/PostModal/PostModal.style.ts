@@ -115,13 +115,12 @@ export const CheckBoxWrapper = styled.div`
 	background-color: #eee;
 `;
 
-export const Tag = styled.span<{index: number; isTagModifyMode: number}>`
+export const Tag = styled.span<{isTagModifyMode: boolean}>`
 	width: 100%;
 	height: fit-content;
 	padding: 5px;
 	font-size: 14px;
-	display: ${({isTagModifyMode, index}) =>
-		isTagModifyMode === index ? 'none' : 'flex'};
+	display: ${({isTagModifyMode}) => (isTagModifyMode ? 'none' : 'flex')};
 	align-items: center;
 	gap: 5px;
 `;
@@ -139,12 +138,10 @@ export const CheckboxInput = styled.input`
 `;
 
 export const TagButtonWrapper = styled.div<{
-	index: number;
-	isTagModifyMode: number;
+	isTagModifyMode: boolean;
 }>`
 	width: 50%;
-	display: ${({isTagModifyMode, index}) =>
-		isTagModifyMode === index ? 'none' : 'flex'};
+	display: ${({isTagModifyMode}) => (isTagModifyMode ? 'none' : 'flex')};
 	justify-content: center;
 	align-items: center;
 	background-color: transparent;
