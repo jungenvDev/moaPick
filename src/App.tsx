@@ -1,6 +1,4 @@
 import React from 'react';
-
-import {LoginPage} from './pages/LoginPage/LoginPage';
 import {
 	BrowserRouter as Router,
 	Navigate,
@@ -21,28 +19,9 @@ function App() {
 			<GlobalStyle />
 			<Router>
 				<Routes>
-					<Route
-						path='/'
-						element={
-							isUserLoggedIn ? (
-								<Navigate to='/dashboard' />
-							) : (
-								<Navigate to='/login' />
-							)
-						}
-					/>
-					<Route
-						path='/login'
-						element={
-							isUserLoggedIn ? <Navigate to='/dashboard' /> : <LoginPage />
-						}
-					/>
-					<Route
-						path={'/dashboard'}
-						element={
-							isUserLoggedIn ? <DashboardPage /> : <Navigate to='/login' />
-						}
-					/>
+					<Route path='/' element={<Navigate to='/dashboard' />} />
+					<Route path='/login' element={<Navigate to='/dashboard' />} />
+					<Route path={'/dashboard'} element={<DashboardPage />} />
 				</Routes>
 			</Router>
 		</QueryClientProvider>
