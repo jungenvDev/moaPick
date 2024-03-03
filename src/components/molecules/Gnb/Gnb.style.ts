@@ -17,7 +17,7 @@ export const GnbWrapper = styled.div`
 `;
 
 export const GnbLogo = styled.img`
-	width: fit-content;
+	width: 143px;
 	height: 25px;
 `;
 

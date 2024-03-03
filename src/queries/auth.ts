@@ -59,3 +59,8 @@ export const useLogInMutation = () => {
 		return await response.json();
 	});
 };
+
+export const getAccessTokenFromURL = () => {
+	const queryParams = new URLSearchParams(window.location.search);
+	return queryParams.get('token'); // 'token'은 액세스 토큰을 포함하는 쿼리 파라미터의 이름입니다.
+};
