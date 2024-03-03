@@ -4,7 +4,6 @@ import {useAtom} from 'jotai';
 import {isUserLoggedInAtom, userAtom} from '../../stores/googleLogin';
 import {useGoogleLogin} from '@react-oauth/google';
 import {
-	getAccessTokenFromURL,
 	getGoogleUserInfo,
 	useLogInMutation,
 	useSignIn,
@@ -18,7 +17,6 @@ export const LoginPage = () => {
 	const {mutate: signIn} = useSignIn();
 	const logInMutation = useLogInMutation();
 
-	const mobileAccessToken = getAccessTokenFromURL();
 	const login = useGoogleLogin({
 		onSuccess: async tokenResponse => {
 			if (tokenResponse.access_token) {
@@ -26,12 +24,8 @@ export const LoginPage = () => {
 				signIn(userData.email, {
 					onSuccess: response => {
 						// 로컬 스토리지에 access_token 저장
-						setCookie(
-							'accessToken',
-							response.access_token ?? mobileAccessToken,
-							7,
-						); // 토큰을 7일 동안 유효한 쿠키로 설정
-						logInMutation.mutate(response.access_token ?? mobileAccessToken, {
+						setCookie('accessToken', response.access_token, 7); // 토큰을 7일 동안 유효한 쿠키로 설정
+						logInMutation.mutate(response.access_token, {
 							onSuccess: data => {
 								setIsUserLoggedIn(true);
 								setUserData(data);

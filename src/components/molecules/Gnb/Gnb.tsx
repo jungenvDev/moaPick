@@ -11,12 +11,11 @@ import {
 } from '../../../queries/article';
 import {useEffect, useRef, useState} from 'react';
 import {setCookie} from '../../../util/cookie';
-import {userAtom} from '../../../stores/googleLogin';
+import {removeTokenFromUrl} from '../../../queries/auth';
 
 export const Gnb = () => {
 	const [isDeleteMode, setIsDeleteMode] = useAtom(isDeleteModeAtom);
 	const [selectedData, setSelectedData] = useAtom(deletedPostAtom);
-	const [userData] = useAtom(userAtom);
 	const [showLogoutDropdown, setShowLogoutDropdown] = useState(false);
 	const logoutRef = useRef<HTMLButtonElement>(null);
 	const {refetch} = useGetAllArticle();
@@ -40,6 +39,7 @@ export const Gnb = () => {
 		//localScript 삭제
 		setCookie('accessToken', '', 0);
 		setCookie('userData', '', 0);
+		removeTokenFromUrl();
 		window.location.href = '/';
 	}
 

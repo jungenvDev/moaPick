@@ -10,13 +10,14 @@ export const DashboardPageWrapper = styled.div`
 	background-color: #f8f7f5;
 `;
 
-export const ContentWrapper = styled.div`
+export const ContentWrapper = styled.div<{mobileAccessToken: string}>`
 	height: fit-content;
 	width: 100%;
 	display: flex;
 	flex-wrap: wrap;
 	margin: 0;
-	padding: 80px 20px 20px 20px;
+	padding: ${({mobileAccessToken}) =>
+		!mobileAccessToken ? '80px 20px 20px 20px' : '20px'};
 	align-items: flex-start;
 	justify-content: flex-start;
 	background-color: #f8f7f5;

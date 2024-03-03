@@ -43,7 +43,7 @@ export const useSignIn = () => {
 };
 
 export const useLogInMutation = () => {
-	return useMutation(async accessToken => {
+	return useMutation(async (accessToken: string) => {
 		const response = await fetch('https://moapick.p-e.kr/user', {
 			method: 'GET',
 			headers: {
@@ -62,5 +62,13 @@ export const useLogInMutation = () => {
 
 export const getAccessTokenFromURL = () => {
 	const queryParams = new URLSearchParams(window.location.search);
-	return queryParams.get('token'); // 'token'은 액세스 토큰을 포함하는 쿼리 파라미터의 이름입니다.
+	return queryParams.get('token') || '';
+};
+
+export const removeTokenFromUrl = () => {
+	const url = new URL(window.location.href); // 현재 URL을 가져옵니다.
+	url.searchParams.delete('token'); // 'token' 파라미터를 제거합니다.
+
+	// 변경된 URL로 히스토리 상태를 업데이트합니다. 페이지는 새로고침되지 않습니다.
+	window.history.pushState({}, '', url);
 };

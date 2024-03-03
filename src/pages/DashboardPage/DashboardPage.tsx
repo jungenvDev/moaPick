@@ -10,20 +10,37 @@ import React, {useEffect} from 'react';
 import {useAttachTag, useGetAllTag} from '../../queries/tag';
 import {selectedTagAtom} from '../../stores/tagAtom';
 import {getCookie, setCookie} from '../../util/cookie';
+import {getAccessTokenFromURL, useLogInMutation} from '../../queries/auth';
+import {isUserLoggedInAtom, userAtom} from '../../stores/googleLogin';
 
 export const DashboardPage = () => {
 	const accessToken = getCookie('accessToken');
 	const [isModalOpen] = useAtom(isPostModalOpenAtom);
 	const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
-
+	const [, setIsUserLoggedIn] = useAtom(isUserLoggedInAtom);
+	const [, setUserData] = useAtom(userAtom);
 	const {
 		data: allArticle,
 		isLoading,
 		isError,
 		refetch: refetchAllArticle,
 	} = useGetAllArticle();
+
 	const {data: allTags, refetch: refetchAllTags} = useGetAllTag();
 	const {mutate: attachTagToArticle} = useAttachTag();
+	const logInMutation = useLogInMutation();
+	const mobileAccessToken = getAccessTokenFromURL();
+	useEffect(() => {
+		setCookie('accessToken', mobileAccessToken, 7); // 토큰을 7일 동안 유효한 쿠키로 설정
+		logInMutation.mutate(mobileAccessToken, {
+			onSuccess: data => {
+				setIsUserLoggedIn(true);
+				setUserData(data);
+				// 로컬 스토리지에 사용자 데이터 저장 (예: JSON 형태로)
+				setCookie('userData', JSON.stringify(data), 7);
+			},
+		});
+	}, []);
 
 	useEffect(() => {
 		// 로그인 상태 변경에 따른 데이터 재요청 로직
@@ -67,9 +84,9 @@ export const DashboardPage = () => {
 
 	return (
 		<S.DashboardPageWrapper>
-			<Gnb />
+			{!mobileAccessToken && <Gnb />}
 			{isModalOpen && <PostModal />}
-			<S.ContentWrapper>
+			<S.ContentWrapper mobileAccessToken={mobileAccessToken}>
 				{/* 태그가 있는 기사 그룹 */}
 				{allTags?.map((tag: any, index: number) => (
 					<React.Fragment key={tag.id}>
