@@ -60,6 +60,7 @@ export const LogoutButton = styled.button`
 	transform: translate(0, 30px);
 	z-index: 11;
 	gap: 10px;
+	white-space: nowrap;
 	box-shadow:
 		0 0 0 1px #d4d4d5,
 		0 2px 0 0 #d4d4d5,
