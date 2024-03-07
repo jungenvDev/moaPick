@@ -31,6 +31,7 @@ export const DashboardPage = () => {
 	const logInMutation = useLogInMutation();
 	const mobileAccessToken = getAccessTokenFromURL();
 	useEffect(() => {
+		if (mobileAccessToken === '') return;
 		setCookie('accessToken', mobileAccessToken, 7); // 토큰을 7일 동안 유효한 쿠키로 설정
 		logInMutation.mutate(mobileAccessToken, {
 			onSuccess: data => {
